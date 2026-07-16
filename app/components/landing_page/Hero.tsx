@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Button from "./Button";
 
 export default function Hero() {
   return (
@@ -20,12 +20,7 @@ export default function Hero() {
           <br />
           na jednom mjestu.
         </p>
-        <Link
-          href="/demo"
-          className="text-lg font-bold text-white bg-[#138d63] px-5 py-3 mt-4 rounded-lg hover:text-black transition-colors duration-400"
-        >
-          Besplatno isprobaj demo
-        </Link>
+        <Button />
       </div>
       <div className="mb-8">
         <Image
@@ -34,6 +29,7 @@ export default function Hero() {
           width={1024}
           height={1024}
           className="w-full h-auto shadow-2xl rounded-lg"
+          loading="eager"
         />
       </div>
     </section>
