@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import {
   LuHouse,
   LuUsers,
@@ -52,21 +55,24 @@ const features = [
 export default function Features() {
   return (
     <section id="features">
-      <div className="flex flex-col items-center justify-center gap-4 my-20 text-center">
+      <div className="flex flex-col items-center justify-center gap-4 mx-10 my-20 text-center">
         <h2 className="text-lg font-bold text-[#138d63]">ZAŠTO DOMUS?</h2>
         <h3 className="text-4xl font-bold">
           Sve što vam treba za upravljanje stanovima.
         </h3>
         <p className="text-lg text-gray-500">
           Domus je napravljen za privatne iznajmljivače koji žele uštedjeti
-          vrijeme,
-          <br /> imati bolji pregled i efikasnije upravljati svojim
+          vrijeme, imati bolji pregled i efikasnije upravljati svojim
           nekretninama.
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 px-10 lg:px-20">
         {features.map((feature) => (
-          <article
+          <motion.article
+            initial={{ opacity: 0.5, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            viewport={{ once: true }}
             key={feature.title}
             className="flex w-full flex-row items-center justify-start gap-4 mb-5"
           >
@@ -75,7 +81,7 @@ export default function Features() {
               <h3 className="text-xl font-bold text-left">{feature.title}</h3>
               <p className="text-gray-500 text-left">{feature.description}</p>
             </div>
-          </article>
+          </motion.article>
         ))}
       </div>
     </section>

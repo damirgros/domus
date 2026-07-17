@@ -7,13 +7,15 @@ import Footer from "./components/landing_page/Footer";
 
 export default function Home() {
   return (
-    <main>
+    <>
       <NavBar />
-      <Hero />
-      <Features />
-      <HowItWorks />
-      <AboutUs />
+      <main>
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <AboutUs />
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

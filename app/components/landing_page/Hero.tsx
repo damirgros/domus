@@ -5,9 +5,9 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="flex flex-row items-center justify-center py-16 px-16 bg-gradient-to-r from-[#fafbfd] via-[#fafbfe] to-white gap-10"
+      className="flex flex-col lg:flex-row items-center justify-center py-16 px-10 bg-gradient-to-r from-[#fafbfd] via-[#fafbfe] to-white gap-10"
     >
-      <div>
+      <div className="animate-fade-in-left">
         <p className="text-[#138d63] font-bold bg-green-100 rounded-lg px-4 py-1 mb-4 w-fit">
           Za privatne Iznajmljivače
         </p>
@@ -22,7 +22,7 @@ export default function Hero() {
         </p>
         <Button />
       </div>
-      <div className="mb-8">
+      <figure className="mb-8 animate-fade-in-right">
         <Image
           alt="Hero Image"
           src="/hero.png"
@@ -31,7 +31,7 @@ export default function Hero() {
           className="w-full h-auto shadow-2xl rounded-lg"
           loading="eager"
         />
-      </div>
+      </figure>
     </section>
   );
 }

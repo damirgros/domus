@@ -19,7 +19,7 @@ export default function NavBar() {
           Domus
         </Link>
       </div>
-      <ul className="flex items-center gap-4">
+      <ul className="hidden md:flex items-center gap-4">
         <li>
           <NavLink href="#features">Značajke</NavLink>
         </li>
@@ -30,7 +30,7 @@ export default function NavBar() {
           <NavLink href="#about-us">O nama</NavLink>
         </li>
       </ul>
-      <div className="flex items-center gap-4">
+      <div className="hidden md:flex items-center gap-4">
         <NavLink href="/demo">Demo aplikacija</NavLink>
       </div>
     </nav>
