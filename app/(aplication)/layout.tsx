@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Sidebar from "@/components/aplication/Sidebar/Sidebar";
+import Sidebar from "@/components/ui/aplication/sidebar/Sidebar";
 
 export const metadata: Metadata = {
   title: "Domus demo aplikacija",
@@ -15,7 +15,7 @@ export default function AplicationLayout({
   return (
     <div className="flex flex-row">
       <Sidebar />
-      <main>{children}</main>
+      <main className="w-full">{children}</main>
     </div>
   );
 }

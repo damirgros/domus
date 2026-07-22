@@ -39,7 +39,7 @@ const features = [
     description: "Evidentirajte troškove i generirajte izvještaje.",
     icon: <LuReceipt className="w-10 h-10 text-[#138d63]" aria-hidden="true" />,
   },
-  {
+  /*{
     title: "Komunikacija sa stanarima",
     description:
       "Komunicirajte sa stanarima putem aplikacije i šaljite obavijesti.",
@@ -49,7 +49,7 @@ const features = [
         aria-hidden="true"
       />
     ),
-  },
+  }, */
 ];
 
 export default function Features() {

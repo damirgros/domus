@@ -26,17 +26,17 @@ const pages = [
     ),
   },
   {
-    title: "Pregled svih nekretnina",
+    title: "Nekretnine",
     href: "/overview",
     icon: <LuHouse className="w-10 h-10 text-[#99a7aa]" aria-hidden="true" />,
   },
   {
-    title: "Stanari i ugovori",
+    title: "Stanari",
     href: "/tenants",
     icon: <LuUsers className="w-10 h-10 text-[#99a7aa]" aria-hidden="true" />,
   },
   {
-    title: "Praćenje najma",
+    title: "Najmovi",
     href: "/leases",
     icon: (
       <LuFileText className="w-10 h-10 text-[#99a7aa]" aria-hidden="true" />
@@ -48,11 +48,11 @@ const pages = [
     icon: <LuWrench className="w-10 h-10 text-[#99a7aa]" aria-hidden="true" />,
   },
   {
-    title: "Troškovi i izvještaji",
+    title: "Troškovi",
     href: "/expanses",
     icon: <LuReceipt className="w-10 h-10 text-[#99a7aa]" aria-hidden="true" />,
   },
-  {
+  /*{
     title: "Komunikacija sa stanarima",
     href: "/chat",
     icon: (
@@ -61,7 +61,7 @@ const pages = [
         aria-hidden="true"
       />
     ),
-  },
+  },*/
 ];
 
 export default function Sidebar() {
@@ -83,7 +83,7 @@ export default function Sidebar() {
         className={`
           flex flex-col p-5
           transition-all duration-300
-          gap-5
+          gap-10
         `}
       >
         <button
