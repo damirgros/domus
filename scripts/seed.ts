@@ -128,6 +128,7 @@ async function main() {
         description: `Routine maintenance request for ${property.name}.`,
         status: (["OPEN", "IN_PROGRESS", "COMPLETED"] as const)[index % 3],
         priority: (["LOW", "MEDIUM", "HIGH"] as const)[index % 3],
+        propertyName: property.name,
         propertyId: property.id,
       },
     });
@@ -137,6 +138,7 @@ async function main() {
         title: `${["Boiler service", "Water repair", "Electrical check", "Roof inspection", "Insurance"][index % 5]}`,
         description: `Seed expense for ${property.name}.`,
         amount: (125 + number * 42.5).toFixed(2),
+        propertyName: property.name,
         category: (
           ["REPAIR", "UTILITIES", "TAX", "INSURANCE", "OTHER"] as const
         )[index % 5],

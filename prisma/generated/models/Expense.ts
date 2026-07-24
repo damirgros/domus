@@ -39,6 +39,7 @@ export type ExpenseMinAggregateOutputType = {
   title: string | null
   description: string | null
   amount: runtime.Decimal | null
+  propertyName: string | null
   category: $Enums.ExpenseCategory | null
   propertyId: string | null
   createdAt: Date | null
@@ -49,6 +50,7 @@ export type ExpenseMaxAggregateOutputType = {
   title: string | null
   description: string | null
   amount: runtime.Decimal | null
+  propertyName: string | null
   category: $Enums.ExpenseCategory | null
   propertyId: string | null
   createdAt: Date | null
@@ -59,6 +61,7 @@ export type ExpenseCountAggregateOutputType = {
   title: number
   description: number
   amount: number
+  propertyName: number
   category: number
   propertyId: number
   createdAt: number
@@ -79,6 +82,7 @@ export type ExpenseMinAggregateInputType = {
   title?: true
   description?: true
   amount?: true
+  propertyName?: true
   category?: true
   propertyId?: true
   createdAt?: true
@@ -89,6 +93,7 @@ export type ExpenseMaxAggregateInputType = {
   title?: true
   description?: true
   amount?: true
+  propertyName?: true
   category?: true
   propertyId?: true
   createdAt?: true
@@ -99,6 +104,7 @@ export type ExpenseCountAggregateInputType = {
   title?: true
   description?: true
   amount?: true
+  propertyName?: true
   category?: true
   propertyId?: true
   createdAt?: true
@@ -196,6 +202,7 @@ export type ExpenseGroupByOutputType = {
   title: string
   description: string | null
   amount: runtime.Decimal
+  propertyName: string
   category: $Enums.ExpenseCategory
   propertyId: string
   createdAt: Date
@@ -229,6 +236,7 @@ export type ExpenseWhereInput = {
   title?: Prisma.StringFilter<"Expense"> | string
   description?: Prisma.StringNullableFilter<"Expense"> | string | null
   amount?: Prisma.DecimalFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFilter<"Expense"> | string
   category?: Prisma.EnumExpenseCategoryFilter<"Expense"> | $Enums.ExpenseCategory
   propertyId?: Prisma.StringFilter<"Expense"> | string
   createdAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
@@ -240,6 +248,7 @@ export type ExpenseOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   amount?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   category?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -254,6 +263,7 @@ export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Expense"> | string
   description?: Prisma.StringNullableFilter<"Expense"> | string | null
   amount?: Prisma.DecimalFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFilter<"Expense"> | string
   category?: Prisma.EnumExpenseCategoryFilter<"Expense"> | $Enums.ExpenseCategory
   propertyId?: Prisma.StringFilter<"Expense"> | string
   createdAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
@@ -265,6 +275,7 @@ export type ExpenseOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   amount?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   category?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -283,6 +294,7 @@ export type ExpenseScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Expense"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Expense"> | string | null
   amount?: Prisma.DecimalWithAggregatesFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringWithAggregatesFilter<"Expense"> | string
   category?: Prisma.EnumExpenseCategoryWithAggregatesFilter<"Expense"> | $Enums.ExpenseCategory
   propertyId?: Prisma.StringWithAggregatesFilter<"Expense"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Expense"> | Date | string
@@ -293,6 +305,7 @@ export type ExpenseCreateInput = {
   title: string
   description?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName: string
   category: $Enums.ExpenseCategory
   createdAt?: Date | string
   property: Prisma.PropertyCreateNestedOneWithoutExpensesInput
@@ -303,6 +316,7 @@ export type ExpenseUncheckedCreateInput = {
   title: string
   description?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName: string
   category: $Enums.ExpenseCategory
   propertyId: string
   createdAt?: Date | string
@@ -313,6 +327,7 @@ export type ExpenseUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   property?: Prisma.PropertyUpdateOneRequiredWithoutExpensesNestedInput
@@ -323,6 +338,7 @@ export type ExpenseUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -333,6 +349,7 @@ export type ExpenseCreateManyInput = {
   title: string
   description?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName: string
   category: $Enums.ExpenseCategory
   propertyId: string
   createdAt?: Date | string
@@ -343,6 +360,7 @@ export type ExpenseUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -352,6 +370,7 @@ export type ExpenseUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -372,6 +391,7 @@ export type ExpenseCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   amount?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   category?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -386,6 +406,7 @@ export type ExpenseMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   amount?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   category?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -396,6 +417,7 @@ export type ExpenseMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   amount?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   category?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -456,6 +478,7 @@ export type ExpenseCreateWithoutPropertyInput = {
   title: string
   description?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName: string
   category: $Enums.ExpenseCategory
   createdAt?: Date | string
 }
@@ -465,6 +488,7 @@ export type ExpenseUncheckedCreateWithoutPropertyInput = {
   title: string
   description?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName: string
   category: $Enums.ExpenseCategory
   createdAt?: Date | string
 }
@@ -503,6 +527,7 @@ export type ExpenseScalarWhereInput = {
   title?: Prisma.StringFilter<"Expense"> | string
   description?: Prisma.StringNullableFilter<"Expense"> | string | null
   amount?: Prisma.DecimalFilter<"Expense"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFilter<"Expense"> | string
   category?: Prisma.EnumExpenseCategoryFilter<"Expense"> | $Enums.ExpenseCategory
   propertyId?: Prisma.StringFilter<"Expense"> | string
   createdAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
@@ -513,6 +538,7 @@ export type ExpenseCreateManyPropertyInput = {
   title: string
   description?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName: string
   category: $Enums.ExpenseCategory
   createdAt?: Date | string
 }
@@ -522,6 +548,7 @@ export type ExpenseUpdateWithoutPropertyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -531,6 +558,7 @@ export type ExpenseUncheckedUpdateWithoutPropertyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -540,6 +568,7 @@ export type ExpenseUncheckedUpdateManyWithoutPropertyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -551,6 +580,7 @@ export type ExpenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   title?: boolean
   description?: boolean
   amount?: boolean
+  propertyName?: boolean
   category?: boolean
   propertyId?: boolean
   createdAt?: boolean
@@ -562,6 +592,7 @@ export type ExpenseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   title?: boolean
   description?: boolean
   amount?: boolean
+  propertyName?: boolean
   category?: boolean
   propertyId?: boolean
   createdAt?: boolean
@@ -573,6 +604,7 @@ export type ExpenseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   title?: boolean
   description?: boolean
   amount?: boolean
+  propertyName?: boolean
   category?: boolean
   propertyId?: boolean
   createdAt?: boolean
@@ -584,12 +616,13 @@ export type ExpenseSelectScalar = {
   title?: boolean
   description?: boolean
   amount?: boolean
+  propertyName?: boolean
   category?: boolean
   propertyId?: boolean
   createdAt?: boolean
 }
 
-export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "amount" | "category" | "propertyId" | "createdAt", ExtArgs["result"]["expense"]>
+export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "amount" | "propertyName" | "category" | "propertyId" | "createdAt", ExtArgs["result"]["expense"]>
 export type ExpenseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
 }
@@ -610,6 +643,7 @@ export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     title: string
     description: string | null
     amount: runtime.Decimal
+    propertyName: string
     category: $Enums.ExpenseCategory
     propertyId: string
     createdAt: Date
@@ -1041,6 +1075,7 @@ export interface ExpenseFieldRefs {
   readonly title: Prisma.FieldRef<"Expense", 'String'>
   readonly description: Prisma.FieldRef<"Expense", 'String'>
   readonly amount: Prisma.FieldRef<"Expense", 'Decimal'>
+  readonly propertyName: Prisma.FieldRef<"Expense", 'String'>
   readonly category: Prisma.FieldRef<"Expense", 'ExpenseCategory'>
   readonly propertyId: Prisma.FieldRef<"Expense", 'String'>
   readonly createdAt: Prisma.FieldRef<"Expense", 'DateTime'>

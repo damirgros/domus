@@ -30,6 +30,7 @@ export type MaintenanceTicketMinAggregateOutputType = {
   description: string | null
   status: $Enums.MaintenanceStatus | null
   priority: $Enums.PriorityStatus | null
+  propertyName: string | null
   propertyId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -41,6 +42,7 @@ export type MaintenanceTicketMaxAggregateOutputType = {
   description: string | null
   status: $Enums.MaintenanceStatus | null
   priority: $Enums.PriorityStatus | null
+  propertyName: string | null
   propertyId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,6 +54,7 @@ export type MaintenanceTicketCountAggregateOutputType = {
   description: number
   status: number
   priority: number
+  propertyName: number
   propertyId: number
   createdAt: number
   updatedAt: number
@@ -65,6 +68,7 @@ export type MaintenanceTicketMinAggregateInputType = {
   description?: true
   status?: true
   priority?: true
+  propertyName?: true
   propertyId?: true
   createdAt?: true
   updatedAt?: true
@@ -76,6 +80,7 @@ export type MaintenanceTicketMaxAggregateInputType = {
   description?: true
   status?: true
   priority?: true
+  propertyName?: true
   propertyId?: true
   createdAt?: true
   updatedAt?: true
@@ -87,6 +92,7 @@ export type MaintenanceTicketCountAggregateInputType = {
   description?: true
   status?: true
   priority?: true
+  propertyName?: true
   propertyId?: true
   createdAt?: true
   updatedAt?: true
@@ -171,6 +177,7 @@ export type MaintenanceTicketGroupByOutputType = {
   description: string
   status: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   propertyId: string
   createdAt: Date
   updatedAt: Date
@@ -203,6 +210,7 @@ export type MaintenanceTicketWhereInput = {
   description?: Prisma.StringFilter<"MaintenanceTicket"> | string
   status?: Prisma.EnumMaintenanceStatusFilter<"MaintenanceTicket"> | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFilter<"MaintenanceTicket"> | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFilter<"MaintenanceTicket"> | string
   propertyId?: Prisma.StringFilter<"MaintenanceTicket"> | string
   createdAt?: Prisma.DateTimeFilter<"MaintenanceTicket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MaintenanceTicket"> | Date | string
@@ -215,6 +223,7 @@ export type MaintenanceTicketOrderByWithRelationInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -230,6 +239,7 @@ export type MaintenanceTicketWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringFilter<"MaintenanceTicket"> | string
   status?: Prisma.EnumMaintenanceStatusFilter<"MaintenanceTicket"> | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFilter<"MaintenanceTicket"> | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFilter<"MaintenanceTicket"> | string
   propertyId?: Prisma.StringFilter<"MaintenanceTicket"> | string
   createdAt?: Prisma.DateTimeFilter<"MaintenanceTicket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MaintenanceTicket"> | Date | string
@@ -242,6 +252,7 @@ export type MaintenanceTicketOrderByWithAggregationInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -259,6 +270,7 @@ export type MaintenanceTicketScalarWhereWithAggregatesInput = {
   description?: Prisma.StringWithAggregatesFilter<"MaintenanceTicket"> | string
   status?: Prisma.EnumMaintenanceStatusWithAggregatesFilter<"MaintenanceTicket"> | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusWithAggregatesFilter<"MaintenanceTicket"> | $Enums.PriorityStatus
+  propertyName?: Prisma.StringWithAggregatesFilter<"MaintenanceTicket"> | string
   propertyId?: Prisma.StringWithAggregatesFilter<"MaintenanceTicket"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceTicket"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceTicket"> | Date | string
@@ -270,6 +282,7 @@ export type MaintenanceTicketCreateInput = {
   description: string
   status?: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   createdAt?: Date | string
   updatedAt?: Date | string
   property: Prisma.PropertyCreateNestedOneWithoutMaintenanceInput
@@ -281,6 +294,7 @@ export type MaintenanceTicketUncheckedCreateInput = {
   description: string
   status?: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   propertyId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -292,6 +306,7 @@ export type MaintenanceTicketUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   property?: Prisma.PropertyUpdateOneRequiredWithoutMaintenanceNestedInput
@@ -303,6 +318,7 @@ export type MaintenanceTicketUncheckedUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -314,6 +330,7 @@ export type MaintenanceTicketCreateManyInput = {
   description: string
   status?: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   propertyId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -325,6 +342,7 @@ export type MaintenanceTicketUpdateManyMutationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -335,6 +353,7 @@ export type MaintenanceTicketUncheckedUpdateManyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -356,6 +375,7 @@ export type MaintenanceTicketCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -367,6 +387,7 @@ export type MaintenanceTicketMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -378,6 +399,7 @@ export type MaintenanceTicketMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   status?: Prisma.SortOrder
   priority?: Prisma.SortOrder
+  propertyName?: Prisma.SortOrder
   propertyId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -439,6 +461,7 @@ export type MaintenanceTicketCreateWithoutPropertyInput = {
   description: string
   status?: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -449,6 +472,7 @@ export type MaintenanceTicketUncheckedCreateWithoutPropertyInput = {
   description: string
   status?: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -488,6 +512,7 @@ export type MaintenanceTicketScalarWhereInput = {
   description?: Prisma.StringFilter<"MaintenanceTicket"> | string
   status?: Prisma.EnumMaintenanceStatusFilter<"MaintenanceTicket"> | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFilter<"MaintenanceTicket"> | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFilter<"MaintenanceTicket"> | string
   propertyId?: Prisma.StringFilter<"MaintenanceTicket"> | string
   createdAt?: Prisma.DateTimeFilter<"MaintenanceTicket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MaintenanceTicket"> | Date | string
@@ -499,6 +524,7 @@ export type MaintenanceTicketCreateManyPropertyInput = {
   description: string
   status?: $Enums.MaintenanceStatus
   priority: $Enums.PriorityStatus
+  propertyName: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -509,6 +535,7 @@ export type MaintenanceTicketUpdateWithoutPropertyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -519,6 +546,7 @@ export type MaintenanceTicketUncheckedUpdateWithoutPropertyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -529,6 +557,7 @@ export type MaintenanceTicketUncheckedUpdateManyWithoutPropertyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumMaintenanceStatusFieldUpdateOperationsInput | $Enums.MaintenanceStatus
   priority?: Prisma.EnumPriorityStatusFieldUpdateOperationsInput | $Enums.PriorityStatus
+  propertyName?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -541,6 +570,7 @@ export type MaintenanceTicketSelect<ExtArgs extends runtime.Types.Extensions.Int
   description?: boolean
   status?: boolean
   priority?: boolean
+  propertyName?: boolean
   propertyId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -553,6 +583,7 @@ export type MaintenanceTicketSelectCreateManyAndReturn<ExtArgs extends runtime.T
   description?: boolean
   status?: boolean
   priority?: boolean
+  propertyName?: boolean
   propertyId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -565,6 +596,7 @@ export type MaintenanceTicketSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   description?: boolean
   status?: boolean
   priority?: boolean
+  propertyName?: boolean
   propertyId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -577,12 +609,13 @@ export type MaintenanceTicketSelectScalar = {
   description?: boolean
   status?: boolean
   priority?: boolean
+  propertyName?: boolean
   propertyId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MaintenanceTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "priority" | "propertyId" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceTicket"]>
+export type MaintenanceTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "priority" | "propertyName" | "propertyId" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceTicket"]>
 export type MaintenanceTicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
 }
@@ -604,6 +637,7 @@ export type $MaintenanceTicketPayload<ExtArgs extends runtime.Types.Extensions.I
     description: string
     status: $Enums.MaintenanceStatus
     priority: $Enums.PriorityStatus
+    propertyName: string
     propertyId: string
     createdAt: Date
     updatedAt: Date
@@ -1036,6 +1070,7 @@ export interface MaintenanceTicketFieldRefs {
   readonly description: Prisma.FieldRef<"MaintenanceTicket", 'String'>
   readonly status: Prisma.FieldRef<"MaintenanceTicket", 'MaintenanceStatus'>
   readonly priority: Prisma.FieldRef<"MaintenanceTicket", 'PriorityStatus'>
+  readonly propertyName: Prisma.FieldRef<"MaintenanceTicket", 'String'>
   readonly propertyId: Prisma.FieldRef<"MaintenanceTicket", 'String'>
   readonly createdAt: Prisma.FieldRef<"MaintenanceTicket", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"MaintenanceTicket", 'DateTime'>

@@ -132,6 +132,8 @@ model MaintenanceTicket {
   status      MaintenanceStatus @default(OPEN)
   priority    PriorityStatus 
 
+  propertyName String
+
   propertyId  String
   property    Property @relation(fields: [propertyId], references: [id])
 
@@ -161,6 +163,7 @@ model Expense {
   description String?
 
   amount      Decimal
+  propertyName String
 
   category    ExpenseCategory
 

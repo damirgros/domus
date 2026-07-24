@@ -1,13 +1,17 @@
+import Link from "next/link";
+
 type HeaderProps = {
   title: string;
   description: string;
   buttonText: string;
+  buttonHref?: string;
 };
 
 export default function Header({
   title,
   description,
   buttonText,
+  buttonHref,
 }: HeaderProps) {
   return (
     <header className="flex flex-row justify-between p-10 w-full">
@@ -16,9 +20,18 @@ export default function Header({
         <p className="text-lg font-bold text-gray-500">{description}</p>
       </div>
       <div>
-        <button className="text-lg font-bold text-white bg-[#138d63] px-5 py-3 mt-4 rounded-lg hover:text-black transition-colors duration-400">
-          + {buttonText}
-        </button>
+        {buttonHref ? (
+          <Link
+            href={buttonHref}
+            className="inline-flex text-lg font-bold text-white bg-[#138d63] px-5 py-3 mt-4 rounded-lg hover:text-black transition-colors duration-400"
+          >
+            + {buttonText}
+          </Link>
+        ) : (
+          <button className="text-lg font-bold text-white bg-[#138d63] px-5 py-3 mt-4 rounded-lg hover:text-black transition-colors duration-400">
+            + {buttonText}
+          </button>
+        )}
       </div>
     </header>
   );

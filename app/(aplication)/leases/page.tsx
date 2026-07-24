@@ -5,27 +5,27 @@ import SearchBar from "@/components/ui/aplication/searchbar/SearchBar";
 import Table from "@/components/ui/aplication/table/Table";
 import Pagination from "@/components/ui/aplication/pagination/Pagination";
 
-import { getTenants } from "@/actions/tenants";
+import { getLeases } from "@/actions/leases";
 
-import type { Tenant } from "@/types/tenant";
+import type { Lease } from "@/types/lease";
 import type { Column } from "@/types/column";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Tenants() {
+export default function Leases() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [leases, setLeases] = useState<Lease[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function loadTenants() {
+    async function loadLeases() {
       try {
-        const result = await getTenants();
-        setTenants(result);
+        const result = await getLeases();
+        setLeases(result);
       } catch (error) {
         console.error(error);
       } finally {
@@ -33,68 +33,55 @@ export default function Tenants() {
       }
     }
 
-    void loadTenants();
+    void loadLeases();
   }, []);
 
   const PAGE_SIZE = 5;
   const start = (page - 1) * PAGE_SIZE;
-
   const normalizedSearch = search.toLowerCase().trim();
 
-  const filteredTenants = tenants.filter((tenant) => {
-    const searchableText = [tenant.fullName, tenant.propertyName]
+  const filteredLeases = leases.filter((lease) => {
+    const searchableText = [lease.tenantId, lease.propertyId, lease.status]
       .join(" ")
       .toLowerCase();
 
     return (
       searchableText.includes(normalizedSearch) &&
-      (!selectedProperty || tenant.propertyName === selectedProperty)
+      (!selectedProperty || lease.propertyId === selectedProperty)
     );
   });
-  const filteredPaginatedTenants = filteredTenants.slice(
+
+  const filteredPaginatedLeases = filteredLeases.slice(
     start,
     start + PAGE_SIZE,
   );
+  const totalPages = Math.max(1, Math.ceil(filteredLeases.length / PAGE_SIZE));
 
-  const totalPages = Math.max(1, Math.ceil(filteredTenants.length / PAGE_SIZE));
-
-  const columns: Column<Tenant>[] = [
-    {
-      key: "fullName",
-      title: "Ime i prezime",
-    },
-    {
-      key: "email",
-      title: "Email",
-    },
-    {
-      key: "phone",
-      title: "Broj telefona",
-    },
-    {
-      key: "propertyName",
-      title: "Nekretnina",
-    },
+  const columns: Column<Lease>[] = [
+    { key: "startDate", title: "Početak" },
+    { key: "endDate", title: "Kraj" },
+    { key: "rentAmount", title: "Iznos najma" },
+    { key: "tenantId", title: "Stanar" },
+    { key: "propertyId", title: "Nekretnina" },
     {
       key: "status",
       title: "Status",
-      render: (value: string) =>
-        value === "ACTIVE" ? "🟢 Aktivan" : "🔴 Neaktivan",
+      render: (value) => (value === "ACTIVE" ? "🟢 Aktivan" : "🔴 Neaktivan"),
     },
   ];
 
-  const properties = useMemo(
-    () => tenants.map((tenant) => tenant.propertyName),
-    [tenants],
+  const propertyIds = useMemo(
+    () => Array.from(new Set(leases.map((lease) => lease.propertyId))),
+    [leases],
   );
 
   return (
     <section>
       <Header
-        title="Stanari"
-        description="Upravljajte informacijama o svojim stanarima"
-        buttonText="Dodaj Stanara"
-        buttonHref="/tenants/new"
+        title="Najmovi"
+        description="Upravljajte najmom i ugovorima"
+        buttonText="Dodaj Najam"
+        buttonHref="/leases/new"
       />
       <div className="border-4 border-gray-200 rounded-xl mx-10">
         <SearchBar
@@ -103,16 +90,16 @@ export default function Tenants() {
             setSearch(value);
             setPage(1);
           }}
-          placeholder="Pretraži stanare..."
+          placeholder="Pretraži najmove..."
           selectedProperty={selectedProperty}
           handleSelectedProperty={setSelectedProperty}
-          properties={properties}
+          properties={propertyIds}
           handlePageChange={setPage}
         />
         <Table
-          data={filteredPaginatedTenants}
+          data={filteredPaginatedLeases}
           columns={columns}
-          onRowClick={(row) => router.push(`/tenants/${row.id}`)}
+          onRowClick={(row) => router.push(`/leases/${row.id}`)}
           isLoading={isLoading}
         />
         <Pagination

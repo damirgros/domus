@@ -1056,6 +1056,7 @@ export const MaintenanceTicketScalarFieldEnum = {
   description: 'description',
   status: 'status',
   priority: 'priority',
+  propertyName: 'propertyName',
   propertyId: 'propertyId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1069,6 +1070,7 @@ export const ExpenseScalarFieldEnum = {
   title: 'title',
   description: 'description',
   amount: 'amount',
+  propertyName: 'propertyName',
   category: 'category',
   propertyId: 'propertyId',
   createdAt: 'createdAt'

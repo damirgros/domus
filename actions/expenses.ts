@@ -1,0 +1,87 @@
+"use server";
+
+import { redirect, RedirectType } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+import { prisma } from "@/lib/prisma";
+import { parseFormData } from "@/lib/form-validators";
+
+const expenseSchema = z.object({
+  title: z.string().trim().min(2),
+  description: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value ? value : null)),
+  amount: z.string().trim().min(1),
+  propertyName: z.string().trim().min(2),
+  category: z.enum(["REPAIR", "UTILITIES", "TAX", "INSURANCE", "OTHER"]),
+  propertyId: z.string().trim().min(1),
+});
+
+export async function getExpenses() {
+  try {
+    return await prisma.expense.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Failed to fetch expenses", error);
+    throw new Error("Unable to load expenses.");
+  }
+}
+
+export async function getExpenseById(id: string) {
+  try {
+    return await prisma.expense.findUnique({
+      where: { id },
+    });
+  } catch (error) {
+    console.error(`Failed to fetch expense ${id}`, error);
+    throw new Error("Unable to load expense.");
+  }
+}
+
+export async function createExpense(formData: FormData) {
+  try {
+    const data = parseFormData(formData, expenseSchema);
+
+    await prisma.expense.create({
+      data,
+    });
+
+    revalidatePath("/expanses");
+    redirect("/expanses", RedirectType.replace);
+  } catch (error) {
+    console.error("Failed to create expense", error);
+    throw new Error("Unable to create expense.");
+  }
+}
+
+export async function updateExpense(id: string, formData: FormData) {
+  try {
+    const data = parseFormData(formData, expenseSchema);
+
+    await prisma.expense.update({
+      where: { id },
+      data,
+    });
+
+    revalidatePath("/expanses");
+    redirect("/expanses", RedirectType.replace);
+  } catch (error) {
+    console.error(`Failed to update expense ${id}`, error);
+    throw new Error("Unable to update expense.");
+  }
+}
+
+export async function deleteExpense(id: string) {
+  try {
+    await prisma.expense.delete({ where: { id } });
+    revalidatePath("/expanses");
+    redirect("/expanses", RedirectType.replace);
+  } catch (error) {
+    console.error(`Failed to delete expense ${id}`, error);
+    throw new Error("Unable to delete expense.");
+  }
+}

@@ -1,7 +1,11 @@
 export type Tenant = {
+  id: string;
   fullName: string;
   email: string;
   phone: string;
-  propertyName: string;
   status: "ACTIVE" | "INACTIVE";
+  propertyName: string;
+  propertyId: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
