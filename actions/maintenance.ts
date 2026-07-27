@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
-import { parseFormData } from "@/lib/form-validators";
+import { parseFormData } from "@/utils/form-validators";
 
 const maintenanceTicketSchema = z.object({
   title: z.string().trim().min(2),

@@ -7,7 +7,7 @@ export function parseFormData<TSchema extends z.ZodTypeAny>(
   const result = schema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!result.success) {
-    console.error("Form validation failed", result.error.flatten());
+    console.error("Form validation failed", result.error);
     throw new Error("Invalid form data.");
   }
 
