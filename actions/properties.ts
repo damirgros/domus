@@ -4,6 +4,8 @@ import { redirect, RedirectType } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { cookies } from "next/headers";
+
 import { prisma } from "@/lib/prisma";
 import { parseFormData } from "@/utils/form-validators";
 
@@ -29,9 +31,20 @@ const propertySchema = z.object({
 });
 
 export async function getProperties() {
+  const cookieStore = await cookies();
+  const sessionId = await cookieStore.get("session")?.value;
+
+  if (!sessionId) {
+    throw new Error("No session found");
+  }
+
   try {
     return await prisma.property.findMany({
-      orderBy: { createdAt: "desc" },
+      where: {
+        workspace: {
+          sessionId,
+        },
+      },
     });
   } catch (error) {
     console.error("Failed to fetch properties", error);

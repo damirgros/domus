@@ -7,6 +7,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { parseFormData } from "@/utils/form-validators";
 
+import { cookies } from "next/headers";
+
 const expenseSchema = z.object({
   title: z.string().trim().min(2),
   description: z
@@ -21,13 +23,28 @@ const expenseSchema = z.object({
 });
 
 export async function getExpenses() {
+  const cookieStore = await cookies();
+  const sessionId = await cookieStore.get("session")?.value;
+
+  if (!sessionId) {
+    throw new Error("No session found");
+  }
+
   try {
-    return await prisma.expense.findMany({
-      orderBy: { createdAt: "desc" },
+    const expenses = await prisma.expense.findMany({
+      where: {
+        property: {
+          workspace: {
+            sessionId,
+          },
+        },
+      },
     });
+
+    return expenses;
   } catch (error) {
-    console.error("Failed to fetch expenses", error);
-    throw new Error("Unable to load expenses.");
+    console.error(error);
+    throw new Error("Failed to load expenses.");
   }
 }
 

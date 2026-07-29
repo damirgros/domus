@@ -31,7 +31,7 @@ export default function NavBar() {
         </li>
       </ul>
       <div className="hidden md:flex items-center gap-4">
-        <NavLink href="/dashboard">Demo aplikacija</NavLink>
+        <NavLink href="/demo">Demo aplikacija</NavLink>
       </div>
     </nav>
   );

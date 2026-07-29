@@ -4,6 +4,8 @@ import { redirect, RedirectType } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { cookies } from "next/headers";
+
 import { prisma } from "@/lib/prisma";
 import { parseFormData } from "@/utils/form-validators";
 
@@ -17,9 +19,22 @@ const maintenanceTicketSchema = z.object({
 });
 
 export async function getMaintenanceTickets() {
+  const cookieStore = await cookies();
+  const sessionId = await cookieStore.get("session")?.value;
+
+  if (!sessionId) {
+    throw new Error("No session found");
+  }
+
   try {
     return await prisma.maintenanceTicket.findMany({
-      orderBy: { createdAt: "desc" },
+      where: {
+        property: {
+          workspace: {
+            sessionId,
+          },
+        },
+      },
     });
   } catch (error) {
     console.error("Failed to fetch maintenance tickets", error);

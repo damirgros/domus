@@ -3,8 +3,22 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Demo() {
   const domus = ["D", "O", "M", "U", "S"];
+  const router = useRouter();
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      router.push("/dashboard");
+    }, 3000);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   return (
     <div className="flex flex-row items-center justify-center w-screen h-screen gap-10">
       <motion.figure

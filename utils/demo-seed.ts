@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/prisma/generated/client";
+import type { Workspace } from "@/types/workspace";
 
 const connectionUrl = new URL(process.env.POSTGRES_URL ?? "");
 connectionUrl.searchParams.delete("sslmode");
@@ -47,27 +48,12 @@ const lastNames = [
   "Ortiz",
 ];
 
-async function main() {
-  await prisma.payment.deleteMany();
-  await prisma.expense.deleteMany();
-  await prisma.maintenanceTicket.deleteMany();
-  await prisma.lease.deleteMany();
-  await prisma.tenant.deleteMany();
-  await prisma.property.deleteMany();
-  await prisma.workspace.deleteMany();
-
+export default async function seed(workspace: Workspace) {
   for (let index = 0; index < 15; index += 1) {
     const number = index + 1;
     const firstName = firstNames[index];
     const lastName = lastNames[index];
     const fullName = `${firstName} ${lastName}`;
-
-    const workspace = await prisma.workspace.create({
-      data: {
-        accessToken: `seed-access-token-${number}`,
-        sessionId: `seed-session-${number}`,
-      },
-    });
 
     const property = await prisma.property.create({
       data: {
@@ -143,27 +129,4 @@ async function main() {
       },
     });
   }
-
-  const counts = await Promise.all([
-    prisma.workspace.count(),
-    prisma.property.count(),
-    prisma.tenant.count(),
-    prisma.lease.count(),
-    prisma.payment.count(),
-    prisma.maintenanceTicket.count(),
-    prisma.expense.count(),
-  ]);
-
-  console.log(
-    `Seeded ${counts.join(", ")} records (workspaces, properties, tenants, leases, payments, tickets, expenses).`,
-  );
 }
-
-main()
-  .catch((error) => {
-    console.error("Seeding failed:", error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
