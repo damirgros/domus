@@ -15,7 +15,6 @@ const tenantSchema = z.object({
   phone: z.string().trim().min(5),
   status: z.enum(["ACTIVE", "INACTIVE"]).default("ACTIVE"),
   propertyName: z.string().trim().min(2),
-  propertyId: z.string().trim().min(1),
 });
 
 export async function getTenants() {
@@ -57,16 +56,26 @@ export async function createTenant(formData: FormData) {
   try {
     const data = parseFormData(formData, tenantSchema);
 
-    await prisma.tenant.create({
-      data,
+    const property = await prisma.property.findFirst({
+      where: { name: data.propertyName },
     });
 
-    revalidatePath("/tenants");
-    redirect("/tenants", RedirectType.replace);
+    if (property) {
+      await prisma.tenant.create({
+        data: {
+          ...data,
+          propertyId: property.id,
+        },
+      });
+    } else {
+      throw new Error("No property found to create a new tenant.");
+    }
   } catch (error) {
     console.error("Failed to create tenant", error);
     throw new Error("Unable to create tenant.");
   }
+  revalidatePath("/tenants");
+  redirect("/tenants", RedirectType.replace);
 }
 
 export async function updateTenant(id: string, formData: FormData) {
@@ -77,22 +86,21 @@ export async function updateTenant(id: string, formData: FormData) {
       where: { id },
       data,
     });
-
-    revalidatePath("/tenants");
-    redirect("/tenants", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to update tenant ${id}`, error);
     throw new Error("Unable to update tenant.");
   }
+  revalidatePath("/tenants");
+  redirect("/tenants", RedirectType.replace);
 }
 
 export async function deleteTenant(id: string) {
   try {
     await prisma.tenant.delete({ where: { id } });
-    revalidatePath("/tenants");
-    redirect("/tenants", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to delete tenant ${id}`, error);
     throw new Error("Unable to delete tenant.");
   }
+  revalidatePath("/tenants");
+  redirect("/tenants", RedirectType.replace);
 }

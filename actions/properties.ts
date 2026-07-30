@@ -27,7 +27,6 @@ const propertySchema = z.object({
     .optional()
     .transform((value) => (value ? Number(value) : null)),
   owner: z.string().trim().min(2),
-  workspaceId: z.string().trim().min(1),
 });
 
 export async function getProperties() {
@@ -64,19 +63,41 @@ export async function getPropertyById(id: string) {
 }
 
 export async function createProperty(formData: FormData) {
+  const cookieStore = await cookies();
+  const sessionId = await cookieStore.get("session")?.value;
+
   try {
     const data = parseFormData(formData, propertySchema);
 
-    await prisma.property.create({
-      data,
+    if (!sessionId) {
+      throw new Error("Session id is missing.");
+    }
+
+    const property = await prisma.property.findFirst({
+      where: { name: data.name },
     });
 
-    revalidatePath("/overview");
-    redirect("/overview", RedirectType.replace);
+    if (property) throw new Error("Property with that name already exists.");
+
+    const workspace = await prisma.workspace.findUnique({
+      where: {
+        sessionId,
+      },
+    });
+
+    if (workspace) {
+      await prisma.property.create({
+        data: { ...data, workspaceId: workspace.id },
+      });
+    } else {
+      throw new Error("No workspace found to create property.");
+    }
   } catch (error) {
     console.error("Failed to create property", error);
     throw new Error("Unable to create property.");
   }
+  revalidatePath("/overview");
+  redirect("/overview", RedirectType.replace);
 }
 
 export async function updateProperty(id: string, formData: FormData) {
@@ -87,22 +108,21 @@ export async function updateProperty(id: string, formData: FormData) {
       where: { id },
       data,
     });
-
-    revalidatePath("/overview");
-    redirect("/overview", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to update property ${id}`, error);
     throw new Error("Unable to update property.");
   }
+  revalidatePath("/overview");
+  redirect("/overview", RedirectType.replace);
 }
 
 export async function deleteProperty(id: string) {
   try {
     await prisma.property.delete({ where: { id } });
-    revalidatePath("/overview");
-    redirect("/overview", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to delete property ${id}`, error);
     throw new Error("Unable to delete property.");
   }
+  revalidatePath("/overview");
+  redirect("/overview", RedirectType.replace);
 }

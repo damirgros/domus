@@ -3,7 +3,7 @@ import { createProperty } from "@/actions/properties";
 export default function PropertyCreatePage() {
   return (
     <main className="p-10">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">
@@ -15,7 +15,7 @@ export default function PropertyCreatePage() {
           </div>
           <a
             href="/overview"
-            className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700"
+            className="border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700"
           >
             Nazad
           </a>
@@ -74,14 +74,6 @@ export default function PropertyCreatePage() {
             Vlasnik
             <input
               name="owner"
-              required
-              className="rounded-xl border border-gray-300 px-4 py-3"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
-            Workspace ID
-            <input
-              name="workspaceId"
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />

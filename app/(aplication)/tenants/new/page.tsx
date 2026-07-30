@@ -1,9 +1,12 @@
 import { createTenant } from "@/actions/tenants";
+import { getProperties } from "@/actions/properties";
+import type { Property } from "@/types/property";
 
-export default function TenantCreatePage() {
+export default async function TenantCreatePage() {
+  const properties: Property[] = await getProperties();
   return (
     <main className="p-10">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Novi stanar</h1>
@@ -46,33 +49,31 @@ export default function TenantCreatePage() {
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            Naziv nekretnine
+            <select
+              name="propertyName"
+              className="rounded-xl border border-gray-300 px-4 py-3"
+            >
+              {properties.map((property) => {
+                return (
+                  <option value={property.name} key={property.name}>
+                    {property.name}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Status
             <select
               name="status"
               defaultValue="ACTIVE"
               className="rounded-xl border border-gray-300 px-4 py-3"
             >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
+              <option value="ACTIVE">AKTIVAN</option>
+              <option value="INACTIVE">INAKTIVAN</option>
             </select>
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Naziv nekretnine
-            <input
-              name="propertyName"
-              required
-              className="rounded-xl border border-gray-300 px-4 py-3"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Property ID
-            <input
-              name="propertyId"
-              required
-              className="rounded-xl border border-gray-300 px-4 py-3"
-            />
-          </label>
-
           <div className="md:col-span-2 mt-2 flex justify-end">
             <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white">
               Sačuvaj stanara
