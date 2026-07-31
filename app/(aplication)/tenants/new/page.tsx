@@ -1,6 +1,7 @@
 import { createTenant } from "@/actions/tenants";
 import { getProperties } from "@/actions/properties";
 import type { Property } from "@/types/property";
+import Link from "next/link";
 
 export default async function TenantCreatePage() {
   const properties: Property[] = await getProperties();
@@ -14,12 +15,6 @@ export default async function TenantCreatePage() {
               Unesite podatke za novog stanara.
             </p>
           </div>
-          <a
-            href="/tenants"
-            className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700"
-          >
-            Nazad
-          </a>
         </div>
 
         <form action={createTenant} className="grid gap-4 md:grid-cols-2">
@@ -75,9 +70,17 @@ export default async function TenantCreatePage() {
             </select>
           </label>
           <div className="md:col-span-2 mt-2 flex justify-end">
-            <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white">
-              Sačuvaj stanara
-            </button>
+            <div className="flex flex-row gap-5">
+              <Link
+                href="/tenants"
+                className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
+              >
+                Odustani
+              </Link>
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
+                Spremi
+              </button>
+            </div>
           </div>
         </form>
       </div>

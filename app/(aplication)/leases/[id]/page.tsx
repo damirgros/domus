@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 import { deleteLease, getLeaseById, updateLease } from "@/actions/leases";
 
@@ -16,18 +17,20 @@ export default async function LeaseEditPage({
 
   return (
     <main className="p-10">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Uredi najam</h1>
             <p className="text-sm text-gray-500">Ažurirajte detalje najma.</p>
           </div>
-          <a
-            href="/leases"
-            className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700"
+          <form
+            action={deleteLease.bind(null, id)}
+            className="mt-4 flex justify-start"
           >
-            Nazad
-          </a>
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
         <form
@@ -84,29 +87,28 @@ export default async function LeaseEditPage({
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Property ID
+            Naziv nekretnine
             <input
-              name="propertyId"
-              defaultValue={lease.propertyId}
+              name="propertyName"
+              defaultValue={lease.property.name}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
 
           <div className="md:col-span-2 mt-2 flex justify-end">
-            <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white">
-              Sačuvaj izmene
-            </button>
+            <div className="flex flex-row gap-5">
+              <Link
+                href="/leases"
+                className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
+              >
+                Odustani
+              </Link>
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
+                Spremi
+              </button>
+            </div>
           </div>
-        </form>
-
-        <form
-          action={deleteLease.bind(null, id)}
-          className="mt-4 flex justify-end"
-        >
-          <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white">
-            Obriši
-          </button>
         </form>
       </div>
     </main>

@@ -23,7 +23,7 @@ const leaseSchema = z.object({
   rentAmount: z.string().trim().min(1),
   status: z.enum(["ACTIVE", "INACTIVE"]).default("ACTIVE"),
   tenantId: z.string().trim().min(1),
-  propertyId: z.string().trim().min(1),
+  propertyName: z.string().trim().min(2),
 });
 
 export async function getLeases() {
@@ -54,6 +54,7 @@ export async function getLeaseById(id: string) {
   try {
     return await prisma.lease.findUnique({
       where: { id },
+      include: { property: true },
     });
   } catch (error) {
     console.error(`Failed to fetch lease ${id}`, error);
@@ -65,50 +66,73 @@ export async function createLease(formData: FormData) {
   try {
     const data = parseFormData(formData, leaseSchema);
 
+    const property = await prisma.property.findFirst({
+      where: { name: data.propertyName },
+    });
+
+    if (!property) {
+      throw new Error("No property found to create a new lease.");
+    }
+
     await prisma.lease.create({
       data: {
-        ...data,
+        rentAmount: data.rentAmount,
+        status: data.status,
+        tenantId: data.tenantId,
+        propertyId: property.id,
         startDate: new Date(data.startDate),
         endDate: data.endDate,
       },
     });
-
-    revalidatePath("/leases");
-    redirect("/leases", RedirectType.replace);
   } catch (error) {
     console.error("Failed to create lease", error);
     throw new Error("Unable to create lease.");
   }
+
+  revalidatePath("/leases");
+  redirect("/leases", RedirectType.replace);
 }
 
 export async function updateLease(id: string, formData: FormData) {
   try {
     const data = parseFormData(formData, leaseSchema);
 
+    const property = await prisma.property.findFirst({
+      where: { name: data.propertyName },
+    });
+
+    if (!property) {
+      throw new Error("No property found to update the lease.");
+    }
+
     await prisma.lease.update({
       where: { id },
       data: {
-        ...data,
+        rentAmount: data.rentAmount,
+        status: data.status,
+        tenantId: data.tenantId,
+        propertyId: property.id,
         startDate: new Date(data.startDate),
         endDate: data.endDate,
       },
     });
-
-    revalidatePath("/leases");
-    redirect("/leases", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to update lease ${id}`, error);
     throw new Error("Unable to update lease.");
   }
+
+  revalidatePath("/leases");
+  redirect("/leases", RedirectType.replace);
 }
 
 export async function deleteLease(id: string) {
   try {
     await prisma.lease.delete({ where: { id } });
-    revalidatePath("/leases");
-    redirect("/leases", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to delete lease ${id}`, error);
     throw new Error("Unable to delete lease.");
   }
+
+  revalidatePath("/leases");
+  redirect("/leases", RedirectType.replace);
 }

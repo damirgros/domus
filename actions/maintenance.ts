@@ -15,7 +15,6 @@ const maintenanceTicketSchema = z.object({
   status: z.enum(["OPEN", "IN_PROGRESS", "COMPLETED"]).default("OPEN"),
   priority: z.enum(["HIGH", "MEDIUM", "LOW"]).default("LOW"),
   propertyName: z.string().trim().min(2),
-  propertyId: z.string().trim().min(1),
 });
 
 export async function getMaintenanceTickets() {
@@ -57,42 +56,65 @@ export async function createMaintenanceTicket(formData: FormData) {
   try {
     const data = parseFormData(formData, maintenanceTicketSchema);
 
-    await prisma.maintenanceTicket.create({
-      data,
+    const property = await prisma.property.findFirst({
+      where: { name: data.propertyName },
     });
 
-    revalidatePath("/maintanance");
-    redirect("/maintanance", RedirectType.replace);
+    if (!property) {
+      throw new Error("No property found to create a new maintenance ticket.");
+    }
+
+    await prisma.maintenanceTicket.create({
+      data: {
+        ...data,
+        propertyId: property.id,
+      },
+    });
   } catch (error) {
     console.error("Failed to create maintenance ticket", error);
     throw new Error("Unable to create maintenance ticket.");
   }
+
+  revalidatePath("/maintanance");
+  redirect("/maintanance", RedirectType.replace);
 }
 
 export async function updateMaintenanceTicket(id: string, formData: FormData) {
   try {
     const data = parseFormData(formData, maintenanceTicketSchema);
 
-    await prisma.maintenanceTicket.update({
-      where: { id },
-      data,
+    const property = await prisma.property.findFirst({
+      where: { name: data.propertyName },
     });
 
-    revalidatePath("/maintanance");
-    redirect("/maintanance", RedirectType.replace);
+    if (!property) {
+      throw new Error("No property found to update the maintenance ticket.");
+    }
+
+    await prisma.maintenanceTicket.update({
+      where: { id },
+      data: {
+        ...data,
+        propertyId: property.id,
+      },
+    });
   } catch (error) {
     console.error(`Failed to update maintenance ticket ${id}`, error);
     throw new Error("Unable to update maintenance ticket.");
   }
+
+  revalidatePath("/maintanance");
+  redirect("/maintanance", RedirectType.replace);
 }
 
 export async function deleteMaintenanceTicket(id: string) {
   try {
     await prisma.maintenanceTicket.delete({ where: { id } });
-    revalidatePath("/maintanance");
-    redirect("/maintanance", RedirectType.replace);
   } catch (error) {
     console.error(`Failed to delete maintenance ticket ${id}`, error);
     throw new Error("Unable to delete maintenance ticket.");
   }
+
+  revalidatePath("/maintanance");
+  redirect("/maintanance", RedirectType.replace);
 }

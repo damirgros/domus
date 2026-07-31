@@ -14,7 +14,7 @@ export default function Pagination({
       <button
         disabled={page === 1}
         onClick={() => handlePageChange(page - 1)}
-        className={`border-2 rounded-xl px-3 py-2 ${page === 1 ? "border-gray-200 text-gray-200" : "border-gray-200 text-gray-400"}`}
+        className={`border-2 rounded-xl px-3 py-2 ${page === 1 ? "border-gray-200 text-gray-200" : "text-white bg-[#138d63]"}`}
       >
         Prethodna
       </button>
@@ -26,7 +26,7 @@ export default function Pagination({
       <button
         disabled={page === totalPages}
         onClick={() => handlePageChange(page + 1)}
-        className={`border-2 rounded-xl px-3 py-2 ${page === totalPages ? "border-gray-200 text-gray-200" : "border-gray-200 text-gray-400"}`}
+        className={`border-2 rounded-xl px-3 py-2 ${page === totalPages ? "border-gray-200 text-gray-200" : "text-white bg-[#138d63]"}`}
       >
         Sljedeća
       </button>

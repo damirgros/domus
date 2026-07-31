@@ -18,14 +18,14 @@ export default function SearchBar({
   properties,
 }: SearchBarProps) {
   return (
-    <div className="flex justify-between p-5">
+    <div className="flex justify-between p-5 bg-[#233b40]">
       <search>
         <input
           type="search"
           placeholder={`${placeholder}`}
           onChange={(e) => handleChange(e.target.value)}
           value={value}
-          className="border-2 border-gray-200 rounded-xl px-5 py-2"
+          className="border-2 border-[#138d63] rounded-xl px-5 py-2 text-[#99a7aa] font-bold"
         />
       </search>
       <select
@@ -34,7 +34,7 @@ export default function SearchBar({
           handleSelectedProperty(e.target.value);
           handlePageChange(1);
         }}
-        className="border-2 border-gray-200 rounded-xl px-5 py-2 text-gray-400 font-bold"
+        className="border-2 border-[#138d63] rounded-xl px-5 py-2 text-[#99a7aa] font-bold"
       >
         <option value="">Sve nekretnine</option>
 

@@ -1,7 +1,8 @@
 "use client";
 
 import {
-  LuMenu,
+  LuArrowLeft,
+  LuArrowRight,
   LuLayoutDashboard,
   LuHouse,
   LuUsers,
@@ -13,6 +14,7 @@ import {
 import SidebarLink from "./SidebarLink";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const pages = [
   {
@@ -83,21 +85,23 @@ export default function Sidebar() {
         className={`
           flex flex-col p-5
           transition-all duration-300
-          gap-10
+          
         `}
       >
-        <button
-          onClick={handleClickMenu}
-          className={`${!isOpen ? "flex items-center justify-center" : "ml-5"}`}
-        >
-          <LuMenu
-            className={`
-              w-10 h-10 text-[#99a7aa]
-              transition-transform duration-300
-              ${isOpen ? "rotate-90" : ""}
-            `}
+        <div className="flex items-center gap-2 ml-1">
+          <Image
+            alt="Domus Logo"
+            src="/logo.svg"
+            width={1024}
+            height={1024}
+            className="w-16 h-auto"
           />
-        </button>
+
+          {isOpen && (
+            <span className="text-4xl text-[#99a7aa] font-bold">Domus</span>
+          )}
+        </div>
+        <hr className="mt-6 my-4 border-gray-200" />{" "}
         <ul className="flex flex-col gap-5">
           {pages.map((page) => {
             return (
@@ -110,6 +114,27 @@ export default function Sidebar() {
             );
           })}
         </ul>
+        <hr className="my-4 border-gray-200" />
+        <button
+          onClick={handleClickMenu}
+          className={`${!isOpen ? "flex items-center justify-center" : "ml-5"}`}
+        >
+          {isOpen ? (
+            <LuArrowLeft
+              className={`
+              w-10 h-10 text-[#99a7aa]
+              
+            `}
+            />
+          ) : (
+            <LuArrowRight
+              className={`
+              w-10 h-10 text-[#99a7aa]
+              
+            `}
+            />
+          )}
+        </button>
       </nav>
     </aside>
   );

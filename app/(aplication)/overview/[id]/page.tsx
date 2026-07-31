@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 import {
   deleteProperty,
@@ -30,12 +31,14 @@ export default async function PropertyEditPage({
               Ažurirajte podatke o nekretnini.
             </p>
           </div>
-          <a
-            href="/overview"
-            className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700"
+          <form
+            action={deleteProperty.bind(null, id)}
+            className="mt-4 flex justify-start"
           >
-            Nazad
-          </a>
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
         <form
@@ -107,19 +110,18 @@ export default async function PropertyEditPage({
           </label>
 
           <div className="md:col-span-2 mt-2 flex justify-end">
-            <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white">
-              Sačuvaj izmene
-            </button>
+            <div className="flex flex-row gap-5">
+              <Link
+                href="/overview"
+                className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
+              >
+                Odustani
+              </Link>
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
+                Spremi
+              </button>
+            </div>
           </div>
-        </form>
-
-        <form
-          action={deleteProperty.bind(null, id)}
-          className="mt-4 flex justify-start"
-        >
-          <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white">
-            Obriši
-          </button>
         </form>
       </div>
     </main>
