@@ -1,15 +1,7 @@
 import { getDashboardSummary } from "@/actions/dashboard";
 import formatDate from "@/utils/format-date";
-
-const formatCurrency = (value: string) => {
-  const numericValue = Number(value ?? 0);
-
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(numericValue);
-};
+import IncomeChart from "@/components/ui/aplication/charts/IncomeChart";
+import formatCurrency from "@/utils/format-currency";
 
 export default async function Dashboard() {
   const summary = await getDashboardSummary();
@@ -41,14 +33,6 @@ export default async function Dashboard() {
     },
   ];
 
-  const occupancy = Math.min(
-    100,
-    Math.round(
-      (summary.tenantCount / Math.max(summary.propertyCount, 1)) * 100,
-    ),
-  );
-  const maintenanceFocus = Math.min(100, summary.maintenanceCount * 10);
-
   return (
     <main className="space-y-8 p-10">
       <section className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -77,7 +61,7 @@ export default async function Dashboard() {
         ))}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+      <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
         <article className="rounded-xl border-4 border-gray-200 bg-white p-6">
           <h2 className="text-2xl font-bold text-gray-900">Istek najmova</h2>
           <div className="mt-5 space-y-3">
@@ -109,35 +93,10 @@ export default async function Dashboard() {
         </article>
 
         <article className="rounded-xl border-4 border-gray-200 bg-white p-6">
-          <h2 className="text-2xl font-bold text-gray-900">Status portfolia</h2>
-          <div className="mt-6 space-y-4">
-            <div>
-              <div className="mb-2 flex items-center justify-between text-sm font-bold text-gray-500">
-                <span>Zauzetost</span>
-                <span>{occupancy}%</span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-full rounded-full bg-[#138d63]"
-                  style={{ width: `${occupancy}%` }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-2 flex items-center justify-between text-sm font-bold text-gray-500">
-                <span>Upravljački fokus</span>
-                <span>
-                  {summary.maintenanceCount > 0 ? "Aktivno" : "Mirno"}
-                </span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-full rounded-full bg-gray-900"
-                  style={{ width: `${maintenanceFocus}%` }}
-                />
-              </div>
-            </div>
+          <h2 className="text-2xl font-bold text-gray-900">Prihod</h2>
+          <span className="text-gray-400">U zadnjih 6 mjeseci</span>
+          <div className="mt-6 h-full w-full">
+            <IncomeChart />
           </div>
         </article>
       </section>
