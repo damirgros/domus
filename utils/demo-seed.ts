@@ -13,39 +13,39 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 const firstNames = [
-  "Alex",
-  "Bianca",
-  "Carlos",
-  "Diana",
-  "Elias",
-  "Fatima",
-  "Gabriel",
-  "Hannah",
   "Ivan",
-  "Julia",
-  "Kai",
-  "Lea",
-  "Mateo",
-  "Nora",
-  "Omar",
+  "Marko",
+  "Petra",
+  "Ana",
+  "Luka",
+  "Marija",
+  "Josip",
+  "Katarina",
+  "Tomislav",
+  "Martina",
+  "Filip",
+  "Lucija",
+  "Nikola",
+  "Ivana",
+  "Matej",
 ];
 
 const lastNames = [
-  "Adams",
-  "Bennett",
-  "Cole",
-  "Davis",
-  "Evans",
-  "Foster",
-  "Garcia",
-  "Hughes",
-  "Ibrahim",
-  "Jones",
-  "Kim",
-  "Lewis",
-  "Martin",
-  "Nguyen",
-  "Ortiz",
+  "Horvat",
+  "Kovačević",
+  "Babić",
+  "Marić",
+  "Novak",
+  "Jurić",
+  "Knežević",
+  "Perić",
+  "Radić",
+  "Vuković",
+  "Božić",
+  "Grgić",
+  "Pavlović",
+  "Kralj",
+  "Matić",
 ];
 
 export default async function seed(workspace: Workspace) {
@@ -57,12 +57,10 @@ export default async function seed(workspace: Workspace) {
 
     const property = await prisma.property.create({
       data: {
-        name: `${lastName} Residence`,
-        address: `${number * 11} ${firstName} Street`,
-        city: ["Amsterdam", "Rotterdam", "Utrecht", "Eindhoven", "The Hague"][
-          index % 5
-        ],
-        postalCode: `${1000 + number} AB`,
+        name: `${lastName} Kuća`,
+        address: `Ulica ${firstName} ${number * 11}`,
+        city: ["Zagreb", "Split", "Osijek", "Rijeka", "Zadar"][index % 5],
+        postalCode: `${31000 + number}`,
         size: 55 + number * 7.5,
         rooms: 2 + (number % 4),
         owner: fullName,
@@ -81,13 +79,14 @@ export default async function seed(workspace: Workspace) {
       },
     });
 
-    const startDate = new Date(2025, index % 12, 1);
     const lease = await prisma.lease.create({
       data: {
-        startDate,
-        endDate: number % 4 === 0 ? new Date(2027, index % 12, 1) : null,
+        startDate: new Date(2025, index % 12, 1),
+        endDate: new Date(2027, index % 12, 1),
         rentAmount: (950 + number * 75).toFixed(2),
         status: number % 5 === 0 ? "INACTIVE" : "ACTIVE",
+        tenantName: tenant.fullName,
+        propertyName: property.name,
         tenantId: tenant.id,
         propertyId: property.id,
       },
@@ -107,8 +106,16 @@ export default async function seed(workspace: Workspace) {
 
     await prisma.maintenanceTicket.create({
       data: {
-        title: `${["Heating", "Plumbing", "Electrical", "Roof", "Painting"][index % 5]} inspection`,
-        description: `Routine maintenance request for ${property.name}.`,
+        title: `${
+          [
+            "Pregled grijanja",
+            "Pregled vodovoda",
+            "Pregled električnih instalacija",
+            "Pregled krova",
+            "Ličenje",
+          ][index % 5]
+        }`,
+        description: `Redovni zahtjev za održavanje objekta ${property.name}.`,
         status: (["OPEN", "IN_PROGRESS", "COMPLETED"] as const)[index % 3],
         priority: (["LOW", "MEDIUM", "HIGH"] as const)[index % 3],
         propertyName: property.name,
@@ -118,8 +125,16 @@ export default async function seed(workspace: Workspace) {
 
     await prisma.expense.create({
       data: {
-        title: `${["Boiler service", "Water repair", "Electrical check", "Roof inspection", "Insurance"][index % 5]}`,
-        description: `Seed expense for ${property.name}.`,
+        title: `${
+          [
+            "Servis bojlera",
+            "Popravak vodovoda",
+            "Pregled električnih instalacija",
+            "Pregled krova",
+            "Osiguranje",
+          ][index % 5]
+        }`,
+        description: `Trošak za objekt ${property.name}.`,
         amount: (125 + number * 42.5).toFixed(2),
         propertyName: property.name,
         category: (

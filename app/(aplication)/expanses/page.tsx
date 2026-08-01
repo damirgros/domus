@@ -68,7 +68,7 @@ export default function Expanses() {
   const columns: Column<Expense>[] = [
     { key: "title", title: "Naslov" },
     { key: "description", title: "Opis" },
-    { key: "amount", title: "Iznos" },
+    { key: "amount", title: "Iznos(€)" },
     { key: "category", title: "Kategorija" },
     { key: "propertyName", title: "Nekretnina" },
   ];

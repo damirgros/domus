@@ -81,6 +81,9 @@ model Lease {
 
   status      LeaseStatus @default(ACTIVE)
 
+  tenantName  String
+  propertyName  String
+
   tenantId    String
   tenant      Tenant @relation(fields: [tenantId], references: [id])
 

@@ -1,12 +1,5 @@
-import {
-  LuHouse,
-  LuUsers,
-  LuFileText,
-  LuWrench,
-  LuReceipt,
-} from "react-icons/lu";
-
 import { getDashboardSummary } from "@/actions/dashboard";
+import formatDate from "@/utils/format-date";
 
 const formatCurrency = (value: string) => {
   const numericValue = Number(value ?? 0);
@@ -25,57 +18,44 @@ export default async function Dashboard() {
     {
       title: "Nekretnine",
       value: summary.propertyCount,
-      icon: <LuHouse className="h-6 w-6" />,
-      accent: "from-emerald-500 to-teal-600",
-    },
-    {
-      title: "Stanari",
-      value: summary.tenantCount,
-      icon: <LuUsers className="h-6 w-6" />,
-      accent: "from-cyan-500 to-sky-600",
     },
     {
       title: "Aktivni najmovi",
       value: summary.activeLeaseCount,
-      icon: <LuFileText className="h-6 w-6" />,
-      accent: "from-violet-500 to-indigo-600",
     },
     {
-      title: "Održavanje",
-      value: summary.maintenanceCount,
-      icon: <LuWrench className="h-6 w-6" />,
-      accent: "from-amber-500 to-orange-600",
+      title: "Prihod",
+      value: formatCurrency(summary.totalRent),
+      valueClass: "text-[#138d63]",
     },
     {
       title: "Troškovi",
-      value: summary.expenseCount,
-      icon: <LuReceipt className="h-6 w-6" />,
-      accent: "from-rose-500 to-pink-600",
+      value: formatCurrency(summary.totalExpenses),
+      valueClass: "text-red-600",
+    },
+    {
+      title: "Profit",
+      value: formatCurrency(
+        Number(summary.totalRent) - Number(summary.totalExpenses),
+      ),
     },
   ];
 
-  return (
-    <main className="space-y-8 p-6 md:p-10">
-      <section className="rounded-3xl bg-gradient-to-br from-[#233b40] via-[#1b6a54] to-[#138d63] p-8 text-white shadow-xl">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.24em] text-emerald-100">
-              Domus dashboard
-            </p>
-            <h1 className="text-4xl font-black tracking-tight">
-              Pregled poslovanja
-            </h1>
-            <p className="mt-3 text-base text-emerald-50/90">
-              Brzi uvid u stanje nekretnina, stanara, troškova i održavanja.
-            </p>
-          </div>
+  const occupancy = Math.min(
+    100,
+    Math.round(
+      (summary.tenantCount / Math.max(summary.propertyCount, 1)) * 100,
+    ),
+  );
+  const maintenanceFocus = Math.min(100, summary.maintenanceCount * 10);
 
-          <div className="grid min-w-[260px] gap-3 rounded-2xl bg-white/10 p-4 backdrop-blur-md">
-            <p className="text-sm text-emerald-100">Ukupan prihod od najma</p>
-            <p className="text-3xl font-black">
-              {formatCurrency(summary.totalRent)}
-            </p>
-          </div>
+  return (
+    <main className="space-y-8 p-10">
+      <section className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Pregled poslovanja
+          </h1>
         </div>
       </section>
 
@@ -83,20 +63,14 @@ export default async function Dashboard() {
         {stats.map((stat) => (
           <article
             key={stat.title}
-            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+            className="rounded-xl border-4 border-gray-200 bg-white p-5"
           >
-            <div className="mb-4 flex items-center justify-between">
-              <span
-                className={`rounded-xl bg-gradient-to-br ${stat.accent} p-3 text-white`}
-              >
-                {stat.icon}
-              </span>
-              <span className="text-xs font-bold uppercase tracking-wide text-gray-400">
-                Live
-              </span>
-            </div>
-            <p className="text-3xl font-black text-slate-900">{stat.value}</p>
-            <p className="mt-2 text-sm font-semibold text-slate-500">
+            <p
+              className={`text-3xl font-bold ${stat.valueClass ?? "text-gray-900"}`}
+            >
+              {stat.value}
+            </p>
+            <p className="mt-2 text-sm font-bold uppercase tracking-wide text-gray-500">
               {stat.title}
             </p>
           </article>
@@ -104,81 +78,63 @@ export default async function Dashboard() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-slate-900">
-              Najnovije aktivnosti
-            </h2>
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-              Sistem
-            </span>
-          </div>
-
-          <div className="space-y-4">
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-500">
-                Aktivnih najamnih ugovora
+        <article className="rounded-xl border-4 border-gray-200 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-900">Istek najmova</h2>
+          <div className="mt-5 space-y-3">
+            {summary.expiringLeases.length > 0 ? (
+              summary.expiringLeases.map((lease) => (
+                <div
+                  key={lease.id}
+                  className="flex items-center justify-between rounded-lg border-2 border-gray-200 px-4 py-3"
+                >
+                  <div>
+                    <p className="font-bold text-gray-900">
+                      {lease.tenant.fullName}
+                    </p>
+                    <p className="mt-1 text-sm font-bold text-gray-500">
+                      {lease.property.name}
+                    </p>
+                  </div>
+                  <p className="text-sm font-bold text-gray-500">
+                    {lease.endDate ? formatDate(lease.endDate) : "-"}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="py-4 font-bold text-gray-500">
+                Nema najmova s definiranim datumom isteka.
               </p>
-              <p className="mt-1 text-xl font-black text-slate-900">
-                {summary.activeLeaseCount}
-              </p>
-            </div>
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-500">
-                Kasni plaćanja
-              </p>
-              <p className="mt-1 text-xl font-black text-rose-600">
-                {summary.latePaymentCount}
-              </p>
-            </div>
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-500">
-                Broj zahtjeva za održavanje
-              </p>
-              <p className="mt-1 text-xl font-black text-slate-900">
-                {summary.maintenanceCount}
-              </p>
-            </div>
+            )}
           </div>
         </article>
 
-        <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-2xl font-bold text-slate-900">
-            Status portfolia
-          </h2>
+        <article className="rounded-xl border-4 border-gray-200 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-900">Status portfolia</h2>
           <div className="mt-6 space-y-4">
             <div>
-              <div className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-600">
+              <div className="mb-2 flex items-center justify-between text-sm font-bold text-gray-500">
                 <span>Zauzetost</span>
-                <span>
-                  {Math.round(
-                    (summary.tenantCount / Math.max(summary.propertyCount, 1)) *
-                      100,
-                  )}
-                  %
-                </span>
+                <span>{occupancy}%</span>
               </div>
-              <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
-                  style={{
-                    width: `${Math.min(100, Math.round((summary.tenantCount / Math.max(summary.propertyCount, 1)) * 100))}%`,
-                  }}
+                  className="h-full rounded-full bg-[#138d63]"
+                  style={{ width: `${occupancy}%` }}
                 />
               </div>
             </div>
 
             <div>
-              <div className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-600">
+              <div className="mb-2 flex items-center justify-between text-sm font-bold text-gray-500">
                 <span>Upravljački fokus</span>
-                <span>{summary.maintenanceCount > 0 ? "Aktivno" : "Sati"}</span>
+                <span>
+                  {summary.maintenanceCount > 0 ? "Aktivno" : "Mirno"}
+                </span>
               </div>
-              <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500"
-                  style={{
-                    width: `${Math.min(100, summary.maintenanceCount * 10)}%`,
-                  }}
+                  className="h-full rounded-full bg-gray-900"
+                  style={{ width: `${maintenanceFocus}%` }}
                 />
               </div>
             </div>

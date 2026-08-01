@@ -98,10 +98,12 @@ async function main() {
     const startDate = new Date(2025, index % 12, 1);
     const lease = await prisma.lease.create({
       data: {
-        startDate,
-        endDate: number % 4 === 0 ? new Date(2027, index % 12, 1) : null,
+        startDate: new Date(2025, index % 12, 1),
+        endDate: new Date(2027, index % 12, 1),
         rentAmount: (950 + number * 75).toFixed(2),
         status: number % 5 === 0 ? "INACTIVE" : "ACTIVE",
+        propertyName: property.name,
+        tenantName: tenant.fullName,
         tenantId: tenant.id,
         propertyId: property.id,
       },

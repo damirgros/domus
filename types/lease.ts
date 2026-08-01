@@ -6,8 +6,10 @@ export type Lease = {
   endDate?: Date | null;
   rentAmount: number | string | { toString(): string };
   status: LeaseStatus;
+  tenantName: string;
   tenantId: string;
   propertyId: string;
+  propertyName: string;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -66,7 +66,7 @@ export default function Overview() {
     { key: "address", title: "Adresa" },
     { key: "city", title: "Grad" },
     { key: "postalCode", title: "Poštanski broj" },
-    { key: "size", title: "Veličina" },
+    { key: "size", title: "Veličina (m²)" },
     { key: "rooms", title: "Sobe" },
     { key: "owner", title: "Vlasnik" },
   ];

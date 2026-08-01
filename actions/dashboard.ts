@@ -1,8 +1,17 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 import { prisma } from "@/lib/prisma";
 
 export async function getDashboardSummary() {
+  const cookieStore = await cookies();
+  const sessionId = await cookieStore.get("session")?.value;
+
+  if (!sessionId) {
+    throw new Error("No session found");
+  }
+
   try {
     const [
       propertyCount,
@@ -13,18 +22,106 @@ export async function getDashboardSummary() {
       latePaymentCount,
       activeLeaseCount,
       totalRent,
+      totalExpenses,
+      expiringLeases,
     ] = await Promise.all([
-      prisma.property.count(),
-      prisma.tenant.count(),
-      prisma.lease.count(),
-      prisma.maintenanceTicket.count(),
-      prisma.expense.count(),
-      prisma.payment.count({ where: { status: "LATE" } }),
-      prisma.lease.count({ where: { status: "ACTIVE" } }),
+      prisma.property.count({
+        where: {
+          workspace: { sessionId },
+        },
+      }),
+      prisma.tenant.count({
+        where: {
+          property: {
+            workspace: { sessionId },
+          },
+        },
+      }),
+      prisma.lease.count({
+        where: {
+          property: {
+            workspace: { sessionId },
+          },
+        },
+      }),
+      prisma.maintenanceTicket.count({
+        where: {
+          property: {
+            workspace: { sessionId },
+          },
+        },
+      }),
+      prisma.expense.count({
+        where: {
+          property: {
+            workspace: { sessionId },
+          },
+        },
+      }),
+      prisma.payment.count({
+        where: {
+          status: "LATE",
+          lease: {
+            property: {
+              workspace: { sessionId },
+            },
+          },
+        },
+      }),
+      prisma.lease.count({
+        where: {
+          status: "ACTIVE",
+          property: {
+            workspace: { sessionId },
+          },
+        },
+      }),
       prisma.lease.aggregate({
+        where: {
+          property: {
+            workspace: { sessionId },
+          },
+        },
         _sum: {
           rentAmount: true,
         },
+      }),
+      prisma.expense.aggregate({
+        where: {
+          property: {
+            workspace: { sessionId },
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+      prisma.lease.findMany({
+        where: {
+          status: "ACTIVE",
+          endDate: { not: null },
+          property: {
+            workspace: { sessionId },
+          },
+        },
+        select: {
+          id: true,
+          endDate: true,
+          tenant: {
+            select: {
+              fullName: true,
+            },
+          },
+          property: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: {
+          endDate: "asc",
+        },
+        take: 5,
       }),
     ]);
 
@@ -37,6 +134,8 @@ export async function getDashboardSummary() {
       latePaymentCount,
       activeLeaseCount,
       totalRent: totalRent._sum.rentAmount?.toString() ?? "0",
+      totalExpenses: totalExpenses._sum.amount?.toString() ?? "0",
+      expiringLeases,
     };
   } catch (error) {
     console.error("Failed to load dashboard summary", error);

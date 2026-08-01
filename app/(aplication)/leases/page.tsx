@@ -13,6 +13,8 @@ import type { Column } from "@/types/column";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import formatDate from "@/utils/format-date";
+
 export default function Leases() {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -41,7 +43,7 @@ export default function Leases() {
   const normalizedSearch = search.toLowerCase().trim();
 
   const filteredLeases = leases.filter((lease) => {
-    const searchableText = [lease.tenantId, lease.propertyId, lease.status]
+    const searchableText = [lease.tenantName, lease.propertyName, lease.status]
       .join(" ")
       .toLowerCase();
 
@@ -58,11 +60,15 @@ export default function Leases() {
   const totalPages = Math.max(1, Math.ceil(filteredLeases.length / PAGE_SIZE));
 
   const columns: Column<Lease>[] = [
-    { key: "startDate", title: "Početak" },
-    { key: "endDate", title: "Kraj" },
-    { key: "rentAmount", title: "Iznos najma" },
-    { key: "tenantId", title: "Stanar" },
-    { key: "propertyId", title: "Nekretnina" },
+    {
+      key: "startDate",
+      title: "Početak",
+      render: (value) => formatDate(value),
+    },
+    { key: "endDate", title: "Kraj", render: (value) => formatDate(value) },
+    { key: "rentAmount", title: "Iznos najma(€)" },
+    { key: "tenantName", title: "Stanar" },
+    { key: "propertyName", title: "Nekretnina" },
     {
       key: "status",
       title: "Status",

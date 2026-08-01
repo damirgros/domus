@@ -1028,6 +1028,8 @@ export const LeaseScalarFieldEnum = {
   endDate: 'endDate',
   rentAmount: 'rentAmount',
   status: 'status',
+  tenantName: 'tenantName',
+  propertyName: 'propertyName',
   tenantId: 'tenantId',
   propertyId: 'propertyId',
   createdAt: 'createdAt',
