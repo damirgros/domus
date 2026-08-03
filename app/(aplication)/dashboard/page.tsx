@@ -59,8 +59,8 @@ export default async function Dashboard() {
         ))}
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <article className="rounded-xl border-4 border-gray-200 bg-white p-6">
+      <section className="grid gap-4 px-0 lg:grid-cols-[1fr_1fr]">
+        <article className="overflow-hidden rounded-xl border-4 border-gray-200 bg-white p-4 sm:p-6">
           <h2 className="text-2xl font-bold text-gray-900">Istek najmova</h2>
           <div className="mt-5 space-y-3">
             {summary.expiringLeases.length > 0 ? (
@@ -90,10 +90,10 @@ export default async function Dashboard() {
           </div>
         </article>
 
-        <article className="rounded-xl border-4 border-gray-200 bg-white p-6">
+        <article className="overflow-hidden rounded-xl border-4 border-gray-200 bg-white p-4 sm:p-6">
           <h2 className="text-2xl font-bold text-gray-900">Prihod</h2>
           <span className="text-gray-400">U zadnjih 6 mjeseci</span>
-          <div className="mt-6 h-full w-full">
+          <div className="mt-6 h-full w-full overflow-hidden">
             <IncomeChart />
           </div>
         </article>
