@@ -7,15 +7,18 @@ import { usePathname } from "next/navigation";
 export default function SidebarLink({
   page,
   isOpen,
+  onNavigate,
 }: {
   page: Page;
   isOpen: boolean;
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
   return (
     <Link
       href={page.href}
-      className={`block w-full p-5 ${pathname === page.href && "bg-[#1b6a54] rounded-xl"}`}
+      onClick={onNavigate}
+      className={`block w-full p-3 sm:p-5 ${pathname === page.href ? "rounded-xl bg-[#1b6a54]" : undefined}`}
     >
       <figure
         className={`flex items-center text-[#99a7aa] ${

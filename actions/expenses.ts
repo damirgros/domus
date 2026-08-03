@@ -9,6 +9,15 @@ import { parseFormData } from "@/utils/form-validators";
 
 import { cookies } from "next/headers";
 
+function serializeExpense<T extends { amount: { toString(): string } }>(
+  expense: T,
+) {
+  return {
+    ...expense,
+    amount: expense.amount.toString(),
+  };
+}
+
 const expenseSchema = z.object({
   title: z.string().trim().min(2),
   description: z
@@ -40,7 +49,7 @@ export async function getExpenses() {
       },
     });
 
-    return expenses;
+    return expenses.map(serializeExpense);
   } catch (error) {
     console.error(error);
     throw new Error("Failed to load expenses.");
@@ -49,9 +58,10 @@ export async function getExpenses() {
 
 export async function getExpenseById(id: string) {
   try {
-    return await prisma.expense.findUnique({
+    const expense = await prisma.expense.findUnique({
       where: { id },
     });
+    return expense ? serializeExpense(expense) : null;
   } catch (error) {
     console.error(`Failed to fetch expense ${id}`, error);
     throw new Error("Unable to load expense.");
@@ -81,8 +91,8 @@ export async function createExpense(formData: FormData) {
     throw new Error("Unable to create expense.");
   }
 
-  revalidatePath("/expanses");
-  redirect("/expanses", RedirectType.replace);
+  revalidatePath("/expenses");
+  redirect("/expenses", RedirectType.replace);
 }
 
 export async function updateExpense(id: string, formData: FormData) {
@@ -109,8 +119,8 @@ export async function updateExpense(id: string, formData: FormData) {
     throw new Error("Unable to update expense.");
   }
 
-  revalidatePath("/expanses");
-  redirect("/expanses", RedirectType.replace);
+  revalidatePath("/expenses");
+  redirect("/expenses", RedirectType.replace);
 }
 
 export async function deleteExpense(id: string) {
@@ -121,6 +131,6 @@ export async function deleteExpense(id: string) {
     throw new Error("Unable to delete expense.");
   }
 
-  revalidatePath("/expanses");
-  redirect("/expanses", RedirectType.replace);
+  revalidatePath("/expenses");
+  redirect("/expenses", RedirectType.replace);
 }

@@ -18,14 +18,14 @@ export default function SearchBar({
   properties,
 }: SearchBarProps) {
   return (
-    <div className="flex justify-between p-5 bg-[#233b40]">
-      <search>
+    <div className="flex flex-col gap-3 bg-[#233b40] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <search className="w-full sm:max-w-md">
         <input
           type="search"
-          placeholder={`${placeholder}`}
+          placeholder={placeholder}
           onChange={(e) => handleChange(e.target.value)}
           value={value}
-          className="border-2 border-[#138d63] rounded-xl px-5 py-2 text-[#99a7aa] font-bold"
+          className="w-full rounded-xl border-2 border-[#138d63] bg-white/10 px-4 py-2.5 text-sm font-semibold text-[#f5f5f5] placeholder:text-[#99a7aa] outline-none ring-0 focus:border-[#2fd18f]"
         />
       </search>
       <select
@@ -34,7 +34,7 @@ export default function SearchBar({
           handleSelectedProperty(e.target.value);
           handlePageChange(1);
         }}
-        className="border-2 border-[#138d63] rounded-xl px-5 py-2 text-[#99a7aa] font-bold"
+        className="w-full rounded-xl border-2 border-[#138d63] bg-white/10 px-4 py-2.5 text-sm font-semibold text-[#f5f5f5] sm:w-56"
       >
         <option value="">Sve nekretnine</option>
 

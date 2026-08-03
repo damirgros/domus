@@ -53,10 +53,8 @@ export default function Leases() {
     );
   });
 
-  const filteredPaginatedLeases = filteredLeases.slice(
-    start,
-    start + PAGE_SIZE,
-  );
+  const paginatedLeases = filteredLeases.slice(start, start + PAGE_SIZE);
+
   const totalPages = Math.max(1, Math.ceil(filteredLeases.length / PAGE_SIZE));
 
   const columns: Column<Lease>[] = [
@@ -89,7 +87,7 @@ export default function Leases() {
         buttonText="Dodaj Najam"
         buttonHref="/leases/new"
       />
-      <div className="border-4 border-gray-200 rounded-xl mx-10">
+      <div className="mx-3 rounded-2xl border-4 border-gray-200 sm:mx-6 lg:mx-10">
         <SearchBar
           value={search}
           handleChange={(value) => {
@@ -103,7 +101,7 @@ export default function Leases() {
           handlePageChange={setPage}
         />
         <Table
-          data={filteredPaginatedLeases}
+          data={paginatedLeases}
           columns={columns}
           onRowClick={(row) => router.push(`/leases/${row.id}`)}
           isLoading={isLoading}

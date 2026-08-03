@@ -9,6 +9,15 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { parseFormData } from "@/utils/form-validators";
 
+function serializeLease<T extends { rentAmount: { toString(): string } }>(
+  lease: T,
+) {
+  return {
+    ...lease,
+    rentAmount: lease.rentAmount.toString(),
+  };
+}
+
 const leaseSchema = z.object({
   startDate: z
     .string()
@@ -22,7 +31,7 @@ const leaseSchema = z.object({
     .transform((value) => (value ? new Date(value) : null)),
   rentAmount: z.string().trim().min(1),
   status: z.enum(["ACTIVE", "INACTIVE"]).default("ACTIVE"),
-  tenantId: z.string().trim().min(1),
+  tenantName: z.string().trim().min(1),
   propertyName: z.string().trim().min(2),
 });
 
@@ -35,7 +44,7 @@ export async function getLeases() {
   }
 
   try {
-    return await prisma.lease.findMany({
+    const leases = await prisma.lease.findMany({
       where: {
         property: {
           workspace: {
@@ -44,6 +53,8 @@ export async function getLeases() {
         },
       },
     });
+
+    return leases.map(serializeLease);
   } catch (error) {
     console.error("Failed to fetch leases", error);
     throw new Error("Unable to load leases.");
@@ -52,10 +63,12 @@ export async function getLeases() {
 
 export async function getLeaseById(id: string) {
   try {
-    return await prisma.lease.findUnique({
+    const lease = await prisma.lease.findUnique({
       where: { id },
       include: { property: true },
     });
+
+    return lease ? serializeLease(lease) : null;
   } catch (error) {
     console.error(`Failed to fetch lease ${id}`, error);
     throw new Error("Unable to load lease.");
@@ -74,11 +87,21 @@ export async function createLease(formData: FormData) {
       throw new Error("No property found to create a new lease.");
     }
 
+    const tenant = await prisma.tenant.findFirst({
+      where: { fullName: data.tenantName },
+    });
+
+    if (!tenant) {
+      throw new Error("No tenant found to create a new lease.");
+    }
+
     await prisma.lease.create({
       data: {
         rentAmount: data.rentAmount,
         status: data.status,
-        tenantId: data.tenantId,
+        tenantName: data.tenantName,
+        tenantId: tenant.id,
+        propertyName: property.name,
         propertyId: property.id,
         startDate: new Date(data.startDate),
         endDate: data.endDate,
@@ -105,12 +128,22 @@ export async function updateLease(id: string, formData: FormData) {
       throw new Error("No property found to update the lease.");
     }
 
+    const tenant = await prisma.tenant.findFirst({
+      where: { fullName: data.tenantName },
+    });
+
+    if (!tenant) {
+      throw new Error("No tenant found to create a new lease.");
+    }
+
     await prisma.lease.update({
       where: { id },
       data: {
         rentAmount: data.rentAmount,
         status: data.status,
-        tenantId: data.tenantId,
+        tenantName: data.tenantName,
+        propertyName: property.name,
+        tenantId: tenant.id,
         propertyId: property.id,
         startDate: new Date(data.startDate),
         endDate: data.endDate,

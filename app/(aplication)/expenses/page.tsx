@@ -69,7 +69,26 @@ export default function Expanses() {
     { key: "title", title: "Naslov" },
     { key: "description", title: "Opis" },
     { key: "amount", title: "Iznos(€)" },
-    { key: "category", title: "Kategorija" },
+    {
+      key: "category",
+      title: "Kategorija",
+      render: (value) => {
+        switch (value) {
+          case "REPAIR":
+            return "POPRAVAK";
+          case "UTILITIES":
+            return "REŽIJE";
+          case "TAX":
+            return "POREZ";
+          case "INSURANCE":
+            return "OSIGURANJE";
+          case "OTHER":
+            return "DRUGO";
+          default:
+            return value;
+        }
+      },
+    },
     { key: "propertyName", title: "Nekretnina" },
   ];
 
@@ -86,7 +105,7 @@ export default function Expanses() {
         buttonText="Dodaj Trošak"
         buttonHref="/expanses/new"
       />
-      <div className="border-4 border-gray-200 rounded-xl mx-10">
+      <div className="mx-3 rounded-2xl border-4 border-gray-200 sm:mx-6 lg:mx-10">
         <SearchBar
           value={search}
           handleChange={(value) => {

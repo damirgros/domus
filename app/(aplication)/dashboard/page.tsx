@@ -34,12 +34,10 @@ export default async function Dashboard() {
   ];
 
   return (
-    <main className="space-y-8 p-10">
+    <main className="space-y-8 p-4 sm:p-6 lg:p-10">
       <section className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900">
-            Pregled poslovanja
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900">Pregled</h1>
         </div>
       </section>
 

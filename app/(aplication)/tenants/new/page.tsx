@@ -6,8 +6,8 @@ import Link from "next/link";
 export default async function TenantCreatePage() {
   const properties: Property[] = await getProperties();
   return (
-    <main className="p-10">
-      <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+    <main className="p-4 sm:p-6 lg:p-10">
+      <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Novi stanar</h1>
@@ -69,8 +69,8 @@ export default async function TenantCreatePage() {
               <option value="INACTIVE">INAKTIVAN</option>
             </select>
           </label>
-          <div className="md:col-span-2 mt-2 flex justify-end">
-            <div className="flex flex-row gap-5">
+          <div className="md:col-span-2 mt-2 flex justify-stretch">
+            <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link
                 href="/tenants"
                 className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"

@@ -5,7 +5,7 @@ function Skeleton({ className }: { className: string }) {
 export default function DashboardLoading() {
   return (
     <main
-      className="space-y-8 p-10"
+      className="space-y-8 p-4 sm:p-6 lg:p-10"
       aria-busy="true"
       aria-label="Učitavanje nadzorne ploče"
     >

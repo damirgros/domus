@@ -96,7 +96,7 @@ export default function Tenants() {
         buttonText="Dodaj Stanara"
         buttonHref="/tenants/new"
       />
-      <div className="border-4 border-gray-200 rounded-xl mx-10">
+      <div className="mx-3 rounded-2xl border-4 border-gray-200 sm:mx-6 lg:mx-10">
         <SearchBar
           value={search}
           handleChange={(value) => {

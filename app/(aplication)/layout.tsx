@@ -13,9 +13,9 @@ export default function AplicationLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-row">
+    <div className="flex min-h-screen flex-col bg-slate-50 md:flex-row">
       <Sidebar />
-      <main className="w-full">{children}</main>
+      <main className="flex-1 overflow-x-hidden">{children}</main>
     </div>
   );
 }
