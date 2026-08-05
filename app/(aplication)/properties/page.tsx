@@ -13,7 +13,7 @@ import type { Column } from "@/types/column";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Overview() {
+export default function Properties() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -82,7 +82,7 @@ export default function Overview() {
         title="Nekretnine"
         description="Upravljajte podacima o svojim nekretninama"
         buttonText="Dodaj Nekretninu"
-        buttonHref="/overview/new"
+        buttonHref="/properties/new"
       />
       <div className="mx-3 rounded-2xl border-4 border-gray-200 sm:mx-6 lg:mx-10">
         <SearchBar
@@ -100,7 +100,7 @@ export default function Overview() {
         <Table
           data={filteredPaginatedProperties}
           columns={columns}
-          onRowClick={(row) => router.push(`/overview/${row.id}`)}
+          onRowClick={(row) => router.push(`/properties/${row.id}`)}
           isLoading={isLoading}
         />
         <Pagination

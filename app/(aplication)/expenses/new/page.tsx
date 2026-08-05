@@ -1,7 +1,10 @@
 import { createExpense } from "@/actions/expenses";
 import Link from "next/link";
+import { getProperties } from "@/actions/properties";
+import type { Property } from "@/types/property";
 
-export default function ExpenseCreatePage() {
+export default async function ExpenseCreatePage() {
+  const properties: Property[] = await getProperties();
   return (
     <main className="p-4 sm:p-6 lg:p-10">
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
@@ -55,16 +58,23 @@ export default function ExpenseCreatePage() {
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
-            <input
+            <select
               name="propertyName"
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              {properties.map((property) => {
+                return (
+                  <option value={property.name} key={property.name}>
+                    {property.name}
+                  </option>
+                );
+              })}
+            </select>
           </label>
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link
-                href="/expanses"
+                href="/expenses"
                 className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
               >
                 Odustani

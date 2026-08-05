@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { deleteTenant, getTenantById, updateTenant } from "@/actions/tenants";
+import { getProperties } from "@/actions/properties";
+import type { Property } from "@/types/property";
 
 export default async function TenantEditPage({
   params,
@@ -14,6 +16,8 @@ export default async function TenantEditPage({
   if (!tenant) {
     notFound();
   }
+
+  const properties: Property[] = await getProperties();
 
   return (
     <main className="p-4 sm:p-6 lg:p-10">
@@ -80,12 +84,19 @@ export default async function TenantEditPage({
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
-            <input
+            <select
               name="propertyName"
               defaultValue={tenant.propertyName}
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              {properties.map((property) => {
+                return (
+                  <option value={property.name} key={property.name}>
+                    {property.name}
+                  </option>
+                );
+              })}
+            </select>
           </label>
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">

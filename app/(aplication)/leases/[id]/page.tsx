@@ -2,6 +2,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { deleteLease, getLeaseById, updateLease } from "@/actions/leases";
+import { getProperties } from "@/actions/properties";
+import type { Property } from "@/types/property";
+import { getTenants } from "@/actions/tenants";
+import type { Tenant } from "@/types/tenant";
 
 export default async function LeaseEditPage({
   params,
@@ -14,6 +18,9 @@ export default async function LeaseEditPage({
   if (!lease) {
     notFound();
   }
+
+  const properties: Property[] = await getProperties();
+  const tenants: Tenant[] = await getTenants();
 
   return (
     <main className="p-4 sm:p-6 lg:p-10">
@@ -79,21 +86,35 @@ export default async function LeaseEditPage({
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Ime stanara
-            <input
+            <select
               name="tenantName"
               defaultValue={lease.tenantName}
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              {tenants.map((tenant) => {
+                return (
+                  <option value={tenant.fullName} key={tenant.id}>
+                    {tenant.fullName}
+                  </option>
+                );
+              })}
+            </select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
-            <input
+            <select
               name="propertyName"
               defaultValue={lease.property.name}
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              {properties.map((property) => {
+                return (
+                  <option value={property.name} key={property.name}>
+                    {property.name}
+                  </option>
+                );
+              })}
+            </select>
           </label>
 
           <div className="md:col-span-2 mt-2 flex justify-stretch">

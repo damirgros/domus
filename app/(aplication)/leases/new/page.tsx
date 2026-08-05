@@ -1,7 +1,13 @@
 import { createLease } from "@/actions/leases";
 import Link from "next/link";
+import { getProperties } from "@/actions/properties";
+import type { Property } from "@/types/property";
+import { getTenants } from "@/actions/tenants";
+import type { Tenant } from "@/types/tenant";
 
-export default function LeaseCreatePage() {
+export default async function LeaseCreatePage() {
+  const properties: Property[] = await getProperties();
+  const tenants: Tenant[] = await getTenants();
   return (
     <main className="p-4 sm:p-6 lg:p-10">
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
@@ -54,19 +60,33 @@ export default function LeaseCreatePage() {
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Ime stanara
-            <input
+            <select
               name="tenantName"
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              {tenants.map((tenant) => {
+                return (
+                  <option value={tenant.fullName} key={tenant.id}>
+                    {tenant.fullName}
+                  </option>
+                );
+              })}
+            </select>
           </label>
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
-            <input
+            <select
               name="propertyName"
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              {properties.map((property) => {
+                return (
+                  <option value={property.name} key={property.name}>
+                    {property.name}
+                  </option>
+                );
+              })}
+            </select>
           </label>
 
           <div className="md:col-span-2 mt-2 flex justify-stretch">

@@ -30,7 +30,7 @@ const pages = [
   },
   {
     title: "Nekretnine",
-    href: "/overview",
+    href: "/properties",
     icon: (
       <LuHouse
         className="h-7 w-7 text-[#99a7aa] sm:h-8 sm:w-8"

@@ -13,7 +13,7 @@ import type { Column } from "@/types/column";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Expanses() {
+export default function Expenses() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -103,7 +103,7 @@ export default function Expanses() {
         title="Troškovi"
         description="Upravljajte svim troškovima i rashodima"
         buttonText="Dodaj Trošak"
-        buttonHref="/expanses/new"
+        buttonHref="/expenses/new"
       />
       <div className="mx-3 rounded-2xl border-4 border-gray-200 sm:mx-6 lg:mx-10">
         <SearchBar
@@ -121,7 +121,7 @@ export default function Expanses() {
         <Table
           data={filteredPaginatedExpenses}
           columns={columns}
-          onRowClick={(row) => router.push(`/expanses/${row.id}`)}
+          onRowClick={(row) => router.push(`/expenses/${row.id}`)}
           isLoading={isLoading}
         />
         <Pagination

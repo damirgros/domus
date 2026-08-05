@@ -7,7 +7,8 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
-import { parseFormData } from "@/utils/form-validators";
+
+import type { PropertyFormState } from "@/types/property";
 
 const propertySchema = z.object({
   name: z.string().trim().min(2),
@@ -62,42 +63,77 @@ export async function getPropertyById(id: string) {
   }
 }
 
-export async function createProperty(formData: FormData) {
-  const cookieStore = await cookies();
-  const sessionId = await cookieStore.get("session")?.value;
+export async function createProperty(
+  prevState: PropertyFormState,
+  formData: FormData,
+): Promise<PropertyFormState> {
+  const sessionId = (await cookies()).get("session")?.value;
+
+  if (!sessionId) {
+    console.error("Missing session id");
+    throw new Error("Unauthorized");
+  }
+
+  const result = propertySchema.safeParse({
+    name: formData.get("name"),
+    address: formData.get("address"),
+    city: formData.get("city"),
+    postalCode: formData.get("postalCode"),
+    size: formData.get("size"),
+    rooms: formData.get("rooms"),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.treeifyError(result.error),
+    };
+  }
 
   try {
-    const data = parseFormData(formData, propertySchema);
-
-    if (!sessionId) {
-      throw new Error("Session id is missing.");
-    }
-
-    const property = await prisma.property.findFirst({
-      where: { name: data.name },
-    });
-
-    if (property) throw new Error("Property with that name already exists.");
-
     const workspace = await prisma.workspace.findUnique({
       where: {
         sessionId,
       },
     });
 
-    if (workspace) {
-      await prisma.property.create({
-        data: { ...data, workspaceId: workspace.id },
-      });
-    } else {
-      throw new Error("No workspace found to create property.");
+    if (!workspace) {
+      throw new Error("Workspace not found");
     }
+
+    const existingProperty = await prisma.property.findFirst({
+      where: {
+        name: result.data.name,
+        workspaceId: workspace.id,
+      },
+    });
+
+    if (existingProperty) {
+      return {
+        success: false,
+        errors: {
+          name: ["A property with this name already exists."],
+        },
+      };
+    }
+
+    await prisma.property.create({
+      data: {
+        ...result.data,
+        workspaceId: workspace.id,
+      },
+    });
   } catch (error) {
     console.error("Failed to create property", error);
-    throw new Error("Unable to create property.");
+
+    return {
+      success: false,
+      message: "Unable to create property.",
+    };
   }
-  revalidatePath("/overview");
-  redirect("/overview", RedirectType.replace);
+
+  revalidatePath("/properties");
+  redirect("/properties");
 }
 
 export async function updateProperty(id: string, formData: FormData) {
@@ -112,8 +148,8 @@ export async function updateProperty(id: string, formData: FormData) {
     console.error(`Failed to update property ${id}`, error);
     throw new Error("Unable to update property.");
   }
-  revalidatePath("/overview");
-  redirect("/overview", RedirectType.replace);
+  revalidatePath("/properties");
+  redirect("/properties", RedirectType.replace);
 }
 
 export async function deleteProperty(id: string) {
@@ -123,6 +159,6 @@ export async function deleteProperty(id: string) {
     console.error(`Failed to delete property ${id}`, error);
     throw new Error("Unable to delete property.");
   }
-  revalidatePath("/overview");
-  redirect("/overview", RedirectType.replace);
+  revalidatePath("/properties");
+  redirect("/properties", RedirectType.replace);
 }

@@ -1,26 +1,55 @@
-import { createProperty } from "@/actions/properties";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 
-export default function PropertyCreatePage() {
+import {
+  deleteProperty,
+  getPropertyById,
+  updateProperty,
+} from "@/actions/properties";
+
+export default async function PropertyEditPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const property = await getPropertyById(id);
+
+  if (!property) {
+    notFound();
+  }
+
   return (
     <main className="p-4 sm:p-6 lg:p-10">
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">
-              Nova nekretnina
+              Uredi nekretninu
             </h1>
             <p className="text-sm text-gray-500">
-              Dodajte novu nekretninu u sistem.
+              Ažurirajte podatke o nekretnini.
             </p>
           </div>
+          <form
+            action={deleteProperty.bind(null, id)}
+            className="mt-4 flex justify-start"
+          >
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
-        <form action={createProperty} className="grid gap-4 md:grid-cols-2">
+        <form
+          action={updateProperty.bind(null, id)}
+          className="grid gap-4 md:grid-cols-2"
+        >
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Naziv
             <input
               name="name"
+              defaultValue={property.name}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
@@ -29,6 +58,7 @@ export default function PropertyCreatePage() {
             Adresa
             <input
               name="address"
+              defaultValue={property.address}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
@@ -37,6 +67,7 @@ export default function PropertyCreatePage() {
             Grad
             <input
               name="city"
+              defaultValue={property.city}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
@@ -45,6 +76,7 @@ export default function PropertyCreatePage() {
             Poštanski broj
             <input
               name="postalCode"
+              defaultValue={property.postalCode ?? ""}
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
@@ -54,6 +86,7 @@ export default function PropertyCreatePage() {
               type="number"
               step="0.1"
               name="size"
+              defaultValue={property.size ?? ""}
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
@@ -62,6 +95,7 @@ export default function PropertyCreatePage() {
             <input
               type="number"
               name="rooms"
+              defaultValue={property.rooms ?? ""}
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
@@ -69,6 +103,7 @@ export default function PropertyCreatePage() {
             Vlasnik
             <input
               name="owner"
+              defaultValue={property.owner}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
@@ -77,12 +112,12 @@ export default function PropertyCreatePage() {
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link
-                href="/overview"
+                href="/properties"
                 className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
               >
                 Odustani
               </Link>
-              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
                 Spremi
               </button>
             </div>

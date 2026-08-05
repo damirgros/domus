@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type Property = {
   id: string;
   name: string;
@@ -10,4 +12,12 @@ export type Property = {
   workspaceId: string;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type PropertyFormState = {
+  success: boolean;
+  errors?: {
+    [key: string]: string[];
+  };
+  message?: string;
 };

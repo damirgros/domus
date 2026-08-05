@@ -36,10 +36,16 @@ export default function SearchBar({
         }}
         className="w-full rounded-xl border-2 border-[#138d63] bg-white/10 px-4 py-2.5 text-sm font-semibold text-[#f5f5f5] sm:w-56"
       >
-        <option value="">Sve nekretnine</option>
+        <option value="" className="bg-gray-600 text-white font-bold">
+          Sve nekretnine
+        </option>
 
         {properties.map((property) => (
-          <option key={property} value={property}>
+          <option
+            key={property}
+            value={property}
+            className="bg-gray-600 text-white font-bold"
+          >
             {property}
           </option>
         ))}
