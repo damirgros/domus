@@ -11,9 +11,15 @@ import { prisma } from "@/lib/prisma";
 import type { PropertyFormState } from "@/types/property";
 
 const propertySchema = z.object({
-  name: z.string().trim().min(2),
-  address: z.string().trim().min(2),
-  city: z.string().trim().min(2),
+  name: z.string().trim().min(2, {
+    message: "Naziv mora imati barem 2 znaka.",
+  }),
+  address: z.string().trim().min(2, {
+    message: "Adresa mora imati barem 2 znaka.",
+  }),
+  city: z.string().trim().min(2, {
+    message: "Grad mora imati barem 2 znaka.",
+  }),
   postalCode: z
     .string()
     .trim()
@@ -22,12 +28,20 @@ const propertySchema = z.object({
   size: z
     .string()
     .optional()
+    .refine((value) => !value || !Number.isNaN(Number(value)), {
+      message: "Veličina mora biti broj.",
+    })
     .transform((value) => (value ? Number(value) : null)),
   rooms: z
     .string()
     .optional()
+    .refine((value) => !value || !Number.isNaN(Number(value)), {
+      message: "Broj soba mora biti broj.",
+    })
     .transform((value) => (value ? Number(value) : null)),
-  owner: z.string().trim().min(2),
+  owner: z.string().trim().min(2, {
+    message: "Vlasnik mora imati barem 2 znaka.",
+  }),
 });
 
 export async function getProperties() {
@@ -81,12 +95,13 @@ export async function createProperty(
     postalCode: formData.get("postalCode"),
     size: formData.get("size"),
     rooms: formData.get("rooms"),
+    owner: formData.get("owner"),
   });
 
   if (!result.success) {
     return {
       success: false,
-      errors: z.treeifyError(result.error),
+      errors: z.flattenError(result.error).fieldErrors,
     };
   }
 
@@ -112,7 +127,7 @@ export async function createProperty(
       return {
         success: false,
         errors: {
-          name: ["A property with this name already exists."],
+          name: ["Nekretnina s tim imenom već postoji."],
         },
       };
     }
@@ -136,17 +151,46 @@ export async function createProperty(
   redirect("/properties");
 }
 
-export async function updateProperty(id: string, formData: FormData) {
-  try {
-    const data = parseFormData(formData, propertySchema);
+export async function updateProperty(
+  id: string,
+  prevState: PropertyFormState,
+  formData: FormData,
+) {
+  const sessionId = (await cookies()).get("session")?.value;
 
+  if (!sessionId) {
+    console.error("Missing session id");
+    throw new Error("Unauthorized");
+  }
+
+  const result = propertySchema.safeParse({
+    name: formData.get("name"),
+    address: formData.get("address"),
+    city: formData.get("city"),
+    postalCode: formData.get("postalCode"),
+    size: formData.get("size"),
+    rooms: formData.get("rooms"),
+    owner: formData.get("owner"),
+  });
+
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.flattenError(result.error).fieldErrors,
+    };
+  }
+  try {
     await prisma.property.update({
       where: { id },
-      data,
+      data: result.data,
     });
   } catch (error) {
-    console.error(`Failed to update property ${id}`, error);
-    throw new Error("Unable to update property.");
+    console.error("Failed to update property", error);
+
+    return {
+      success: false,
+      message: "Unable to update property.",
+    };
   }
   revalidatePath("/properties");
   redirect("/properties", RedirectType.replace);

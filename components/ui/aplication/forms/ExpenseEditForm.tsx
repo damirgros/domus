@@ -1,41 +1,30 @@
 "use client";
 
-import { createExpense } from "@/actions/expenses";
-import { getProperties } from "@/actions/properties";
 import Link from "next/link";
-import { useActionState, useEffect, useState, type ChangeEvent } from "react";
+import { useActionState, useState, type ChangeEvent } from "react";
+
+import { deleteExpense, updateExpense } from "@/actions/expenses";
+import type { Expense } from "@/types/expense";
 import type { Property } from "@/types/property";
 
-export default function ExpenseCreatePage() {
-  const [state, formAction] = useActionState(createExpense, {
+export default function ExpenseEditForm({
+  expense,
+  properties,
+}: {
+  expense: Expense;
+  properties: Property[];
+}) {
+  const [state, action] = useActionState(updateExpense.bind(null, expense.id), {
     success: false,
     errors: {},
   });
-  const [properties, setProperties] = useState<Property[]>([]);
   const [values, setValues] = useState({
-    title: "",
-    description: "",
-    amount: "",
-    category: "OTHER",
-    propertyName: "",
+    title: expense.title,
+    description: expense.description ?? "",
+    amount: String(expense.amount),
+    category: expense.category,
+    propertyName: expense.propertyName,
   });
-
-  useEffect(() => {
-    let mounted = true;
-
-    getProperties().then((data) => {
-      if (mounted) {
-        setProperties(data);
-        if (data[0]) {
-          setValues((prev) => ({ ...prev, propertyName: data[0].name }));
-        }
-      }
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleChange = (
     event: ChangeEvent<
@@ -51,14 +40,22 @@ export default function ExpenseCreatePage() {
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Novi trošak</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Uredi trošak</h1>
             <p className="text-sm text-gray-500">
-              Dodajte novi trošak u evidenciju.
+              Ažurirajte postojeći trošak.
             </p>
           </div>
+          <form
+            action={deleteExpense.bind(null, expense.id)}
+            className="mt-4 flex justify-start"
+          >
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
-        <form action={formAction} className="grid gap-4 md:grid-cols-2">
+        <form action={action} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Naslov
             <input
@@ -148,7 +145,7 @@ export default function ExpenseCreatePage() {
               >
                 Odustani
               </Link>
-              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
                 Spremi
               </button>
             </div>

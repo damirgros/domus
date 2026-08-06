@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export type Property = {
   id: string;
   name: string;
@@ -16,8 +14,6 @@ export type Property = {
 
 export type PropertyFormState = {
   success: boolean;
-  errors?: {
-    [key: string]: string[];
-  };
+  errors?: Record<string, string[]>;
   message?: string;
 };

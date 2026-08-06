@@ -1,22 +1,25 @@
 "use client";
-
-import { createProperty } from "@/actions/properties";
-import Link from "next/link";
 import { useActionState, useState } from "react";
+import Link from "next/link";
+import { deleteProperty, updateProperty } from "@/actions/properties";
+import type { Property } from "@/types/property";
 
-export default function PropertyCreatePage() {
-  const [state, formAction] = useActionState(createProperty, {
-    success: false,
-    errors: {},
-  });
+export default function PropertyEditForm({ property }: { property: Property }) {
+  const [state, action] = useActionState(
+    updateProperty.bind(null, property.id),
+    {
+      success: false,
+      errors: {},
+    },
+  );
   const [values, setValues] = useState({
-    name: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    size: "",
-    rooms: "",
-    owner: "",
+    name: property.name,
+    address: property.address,
+    city: property.city,
+    postalCode: property.postalCode ?? "",
+    size: property.size?.toString() ?? "",
+    rooms: property.rooms?.toString() ?? "",
+    owner: property.owner,
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,15 +32,23 @@ export default function PropertyCreatePage() {
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">
-              Nova nekretnina
+              Uredi nekretninu
             </h1>
             <p className="text-sm text-gray-500">
-              Dodajte novu nekretninu u sistem.
+              Ažurirajte podatke o nekretnini.
             </p>
           </div>
+          <form
+            action={deleteProperty.bind(null, property.id)}
+            className="mt-4 flex justify-start"
+          >
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
-        <form action={formAction} className="grid gap-4 md:grid-cols-2">
+        <form action={action} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Naziv
             <input
@@ -137,7 +148,7 @@ export default function PropertyCreatePage() {
               >
                 Odustani
               </Link>
-              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
                 Spremi
               </button>
             </div>

@@ -1,10 +1,50 @@
+"use client";
+
 import { createMaintenanceTicket } from "@/actions/maintenance";
-import Link from "next/link";
 import { getProperties } from "@/actions/properties";
+import Link from "next/link";
+import { useActionState, useEffect, useState, type ChangeEvent } from "react";
 import type { Property } from "@/types/property";
 
-export default async function MaintenanceCreatePage() {
-  const properties: Property[] = await getProperties();
+export default function MaintenanceCreatePage() {
+  const [state, formAction] = useActionState(createMaintenanceTicket, {
+    success: false,
+    errors: {},
+  });
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [values, setValues] = useState({
+    title: "",
+    description: "",
+    status: "OPEN",
+    priority: "LOW",
+    propertyName: "",
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    getProperties().then((data) => {
+      if (!mounted) return;
+      setProperties(data);
+      if (data[0]) {
+        setValues((prev) => ({ ...prev, propertyName: data[0].name }));
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const handleChange = (
+    event: ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = event.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <main className="p-4 sm:p-6 lg:p-10">
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
@@ -19,31 +59,41 @@ export default async function MaintenanceCreatePage() {
           </div>
         </div>
 
-        <form
-          action={createMaintenanceTicket}
-          className="grid gap-4 md:grid-cols-2"
-        >
+        <form action={formAction} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Naslov
             <input
               name="title"
+              value={values.title}
+              onChange={handleChange}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
+          {state.errors?.title && (
+            <p className="text-red-500 text-sm">{state.errors.title[0]}</p>
+          )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Opis
             <textarea
               name="description"
+              value={values.description}
+              onChange={handleChange}
               required
               className="min-h-32 rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
+          {state.errors?.description && (
+            <p className="text-red-500 text-sm">
+              {state.errors.description[0]}
+            </p>
+          )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Status
             <select
               name="status"
-              defaultValue="OPEN"
+              value={values.status}
+              onChange={handleChange}
               className="rounded-xl border border-gray-300 px-4 py-3"
             >
               <option value="OPEN">OTVOREN</option>
@@ -51,11 +101,15 @@ export default async function MaintenanceCreatePage() {
               <option value="COMPLETED">ZAVRŠENO</option>
             </select>
           </label>
+          {state.errors?.status && (
+            <p className="text-red-500 text-sm">{state.errors.status[0]}</p>
+          )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Prioritet
             <select
               name="priority"
-              defaultValue="LOW"
+              value={values.priority}
+              onChange={handleChange}
               className="rounded-xl border border-gray-300 px-4 py-3"
             >
               <option value="HIGH">VISOK</option>
@@ -63,10 +117,15 @@ export default async function MaintenanceCreatePage() {
               <option value="LOW">NIZAK</option>
             </select>
           </label>
+          {state.errors?.priority && (
+            <p className="text-red-500 text-sm">{state.errors.priority[0]}</p>
+          )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
             <select
               name="propertyName"
+              value={values.propertyName}
+              onChange={handleChange}
               className="rounded-xl border border-gray-300 px-4 py-3"
             >
               {properties.map((property) => {
@@ -78,6 +137,11 @@ export default async function MaintenanceCreatePage() {
               })}
             </select>
           </label>
+          {state.errors?.propertyName && (
+            <p className="text-red-500 text-sm">
+              {state.errors.propertyName[0]}
+            </p>
+          )}
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link

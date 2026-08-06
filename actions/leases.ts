@@ -7,7 +7,12 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
-import { parseFormData } from "@/utils/form-validators";
+
+type FormState = {
+  success: boolean;
+  errors?: Record<string, string[]>;
+  message?: string;
+};
 
 function serializeLease<T extends { rentAmount: { toString(): string } }>(
   lease: T,
@@ -21,19 +26,53 @@ function serializeLease<T extends { rentAmount: { toString(): string } }>(
 const leaseSchema = z.object({
   startDate: z
     .string()
-    .min(1)
+    .trim()
+    .min(1, { message: "Datum početka najma je obavezan." })
     .refine((value) => !Number.isNaN(Date.parse(value)), {
-      message: "Invalid start date.",
+      message: "Datum početka nije ispravan.",
     }),
   endDate: z
     .string()
+    .trim()
     .optional()
     .transform((value) => (value ? new Date(value) : null)),
-  rentAmount: z.string().trim().min(1),
-  status: z.enum(["ACTIVE", "INACTIVE"]).default("ACTIVE"),
-  tenantName: z.string().trim().min(1),
-  propertyName: z.string().trim().min(2),
+  rentAmount: z
+    .string()
+    .trim()
+    .min(1, { message: "Iznos najma je obavezan." })
+    .refine((value) => !Number.isNaN(Number(value)), {
+      message: "Iznos najma mora biti broj.",
+    }),
+  status: z
+    .enum(["ACTIVE", "INACTIVE"], {
+      message: "Odaberite status.",
+    })
+    .default("ACTIVE"),
+  tenantName: z.string().trim().min(1, {
+    message: "Ime stanara je obavezno.",
+  }),
+  propertyName: z.string().trim().min(2, {
+    message: "Naziv nekretnine je obavezan.",
+  }),
 });
+
+async function getWorkspaceId() {
+  const sessionId = (await cookies()).get("session")?.value;
+
+  if (!sessionId) {
+    throw new Error("Unauthorized");
+  }
+
+  const workspace = await prisma.workspace.findUnique({
+    where: { sessionId },
+  });
+
+  if (!workspace) {
+    throw new Error("Workspace not found");
+  }
+
+  return workspace.id;
+}
 
 export async function getLeases() {
   const cookiesStore = await cookies();
@@ -75,83 +114,152 @@ export async function getLeaseById(id: string) {
   }
 }
 
-export async function createLease(formData: FormData) {
-  try {
-    const data = parseFormData(formData, leaseSchema);
+export async function createLease(
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const result = leaseSchema.safeParse({
+    startDate: formData.get("startDate"),
+    endDate: formData.get("endDate"),
+    rentAmount: formData.get("rentAmount"),
+    status: formData.get("status"),
+    tenantName: formData.get("tenantName"),
+    propertyName: formData.get("propertyName"),
+  });
 
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.flattenError(result.error).fieldErrors,
+    };
+  }
+
+  try {
+    const workspaceId = await getWorkspaceId();
     const property = await prisma.property.findFirst({
-      where: { name: data.propertyName },
+      where: {
+        name: result.data.propertyName,
+        workspaceId,
+      },
     });
 
     if (!property) {
-      throw new Error("No property found to create a new lease.");
+      return {
+        success: false,
+        errors: {
+          propertyName: ["Odabrana nekretnina nije pronađena."],
+        },
+      };
     }
 
     const tenant = await prisma.tenant.findFirst({
-      where: { fullName: data.tenantName },
+      where: { fullName: result.data.tenantName },
     });
 
     if (!tenant) {
-      throw new Error("No tenant found to create a new lease.");
+      return {
+        success: false,
+        errors: {
+          tenantName: ["Odabrani stanar nije pronađen."],
+        },
+      };
     }
 
     await prisma.lease.create({
       data: {
-        rentAmount: data.rentAmount,
-        status: data.status,
-        tenantName: data.tenantName,
+        rentAmount: Number(result.data.rentAmount),
+        status: result.data.status,
+        tenantName: result.data.tenantName,
         tenantId: tenant.id,
         propertyName: property.name,
         propertyId: property.id,
-        startDate: new Date(data.startDate),
-        endDate: data.endDate,
+        startDate: new Date(result.data.startDate),
+        endDate: result.data.endDate,
       },
     });
   } catch (error) {
     console.error("Failed to create lease", error);
-    throw new Error("Unable to create lease.");
+    return {
+      success: false,
+      message: "Nije moguće kreirati najam.",
+    };
   }
 
   revalidatePath("/leases");
   redirect("/leases", RedirectType.replace);
 }
 
-export async function updateLease(id: string, formData: FormData) {
-  try {
-    const data = parseFormData(formData, leaseSchema);
+export async function updateLease(
+  id: string,
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const result = leaseSchema.safeParse({
+    startDate: formData.get("startDate"),
+    endDate: formData.get("endDate"),
+    rentAmount: formData.get("rentAmount"),
+    status: formData.get("status"),
+    tenantName: formData.get("tenantName"),
+    propertyName: formData.get("propertyName"),
+  });
 
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.flattenError(result.error).fieldErrors,
+    };
+  }
+
+  try {
+    const workspaceId = await getWorkspaceId();
     const property = await prisma.property.findFirst({
-      where: { name: data.propertyName },
+      where: {
+        name: result.data.propertyName,
+        workspaceId,
+      },
     });
 
     if (!property) {
-      throw new Error("No property found to update the lease.");
+      return {
+        success: false,
+        errors: {
+          propertyName: ["Odabrana nekretnina nije pronađena."],
+        },
+      };
     }
 
     const tenant = await prisma.tenant.findFirst({
-      where: { fullName: data.tenantName },
+      where: { fullName: result.data.tenantName },
     });
 
     if (!tenant) {
-      throw new Error("No tenant found to create a new lease.");
+      return {
+        success: false,
+        errors: {
+          tenantName: ["Odabrani stanar nije pronađen."],
+        },
+      };
     }
 
     await prisma.lease.update({
       where: { id },
       data: {
-        rentAmount: data.rentAmount,
-        status: data.status,
-        tenantName: data.tenantName,
+        rentAmount: Number(result.data.rentAmount),
+        status: result.data.status,
+        tenantName: result.data.tenantName,
         propertyName: property.name,
         tenantId: tenant.id,
         propertyId: property.id,
-        startDate: new Date(data.startDate),
-        endDate: data.endDate,
+        startDate: new Date(result.data.startDate),
+        endDate: result.data.endDate,
       },
     });
   } catch (error) {
     console.error(`Failed to update lease ${id}`, error);
-    throw new Error("Unable to update lease.");
+    return {
+      success: false,
+      message: "Nije moguće urediti najam.",
+    };
   }
 
   revalidatePath("/leases");

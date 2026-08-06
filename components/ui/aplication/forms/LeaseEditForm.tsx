@@ -1,56 +1,34 @@
 "use client";
 
-import { createLease } from "@/actions/leases";
-import { getProperties } from "@/actions/properties";
-import { getTenants } from "@/actions/tenants";
 import Link from "next/link";
-import { useActionState, useEffect, useState, type ChangeEvent } from "react";
+import { useActionState, useState, type ChangeEvent } from "react";
+
+import { deleteLease, updateLease } from "@/actions/leases";
+import type { Lease } from "@/types/lease";
 import type { Property } from "@/types/property";
 import type { Tenant } from "@/types/tenant";
 
-export default function LeaseCreatePage() {
-  const [state, formAction] = useActionState(createLease, {
+export default function LeaseEditForm({
+  lease,
+  properties,
+  tenants,
+}: {
+  lease: Lease;
+  properties: Property[];
+  tenants: Tenant[];
+}) {
+  const [state, action] = useActionState(updateLease.bind(null, lease.id), {
     success: false,
     errors: {},
   });
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [tenants, setTenants] = useState<Tenant[]>([]);
   const [values, setValues] = useState({
-    startDate: "",
-    endDate: "",
-    rentAmount: "",
-    status: "ACTIVE",
-    tenantName: "",
-    propertyName: "",
+    startDate: lease.startDate.toISOString().slice(0, 10),
+    endDate: lease.endDate?.toISOString().slice(0, 10) ?? "",
+    rentAmount: String(lease.rentAmount),
+    status: lease.status,
+    tenantName: lease.tenantName,
+    propertyName: lease.propertyName,
   });
-
-  useEffect(() => {
-    let mounted = true;
-
-    Promise.all([getProperties(), getTenants()]).then(
-      ([propertiesData, tenantsData]) => {
-        if (!mounted) return;
-        setProperties(propertiesData);
-        setTenants(tenantsData);
-        if (propertiesData[0]) {
-          setValues((prev) => ({
-            ...prev,
-            propertyName: propertiesData[0].name,
-          }));
-        }
-        if (tenantsData[0]) {
-          setValues((prev) => ({
-            ...prev,
-            tenantName: tenantsData[0].fullName,
-          }));
-        }
-      },
-    );
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -64,14 +42,20 @@ export default function LeaseCreatePage() {
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Novi najam</h1>
-            <p className="text-sm text-gray-500">
-              Kreirajte novi ugovor o najmu.
-            </p>
+            <h1 className="text-3xl font-bold text-slate-900">Uredi najam</h1>
+            <p className="text-sm text-gray-500">Ažurirajte detalje najma.</p>
           </div>
+          <form
+            action={deleteLease.bind(null, lease.id)}
+            className="mt-4 flex justify-start"
+          >
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
-        <form action={formAction} className="grid gap-4 md:grid-cols-2">
+        <form action={action} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Početak
             <input
@@ -176,7 +160,7 @@ export default function LeaseCreatePage() {
               >
                 Odustani
               </Link>
-              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
                 Spremi
               </button>
             </div>

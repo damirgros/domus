@@ -7,15 +7,52 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
-import { parseFormData } from "@/utils/form-validators";
+
+type FormState = {
+  success: boolean;
+  errors?: Record<string, string[]>;
+  message?: string;
+};
 
 const maintenanceTicketSchema = z.object({
-  title: z.string().trim().min(2),
-  description: z.string().trim().min(2),
-  status: z.enum(["OPEN", "IN_PROGRESS", "COMPLETED"]).default("OPEN"),
-  priority: z.enum(["HIGH", "MEDIUM", "LOW"]).default("LOW"),
-  propertyName: z.string().trim().min(2),
+  title: z.string().trim().min(2, {
+    message: "Naslov mora imati barem 2 znaka.",
+  }),
+  description: z.string().trim().min(2, {
+    message: "Opis mora imati barem 2 znaka.",
+  }),
+  status: z
+    .enum(["OPEN", "IN_PROGRESS", "COMPLETED"], {
+      message: "Odaberite status.",
+    })
+    .default("OPEN"),
+  priority: z
+    .enum(["HIGH", "MEDIUM", "LOW"], {
+      message: "Odaberite prioritet.",
+    })
+    .default("LOW"),
+  propertyName: z.string().trim().min(2, {
+    message: "Naziv nekretnine je obavezan.",
+  }),
 });
+
+async function getWorkspaceId() {
+  const sessionId = (await cookies()).get("session")?.value;
+
+  if (!sessionId) {
+    throw new Error("Unauthorized");
+  }
+
+  const workspace = await prisma.workspace.findUnique({
+    where: { sessionId },
+  });
+
+  if (!workspace) {
+    throw new Error("Workspace not found");
+  }
+
+  return workspace.id;
+}
 
 export async function getMaintenanceTickets() {
   const cookieStore = await cookies();
@@ -52,55 +89,112 @@ export async function getMaintenanceTicketById(id: string) {
   }
 }
 
-export async function createMaintenanceTicket(formData: FormData) {
-  try {
-    const data = parseFormData(formData, maintenanceTicketSchema);
+export async function createMaintenanceTicket(
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const result = maintenanceTicketSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    status: formData.get("status"),
+    priority: formData.get("priority"),
+    propertyName: formData.get("propertyName"),
+  });
 
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.flattenError(result.error).fieldErrors,
+    };
+  }
+
+  try {
+    const workspaceId = await getWorkspaceId();
     const property = await prisma.property.findFirst({
-      where: { name: data.propertyName },
+      where: {
+        name: result.data.propertyName,
+        workspaceId,
+      },
     });
 
     if (!property) {
-      throw new Error("No property found to create a new maintenance ticket.");
+      return {
+        success: false,
+        errors: {
+          propertyName: ["Odabrana nekretnina nije pronađena."],
+        },
+      };
     }
 
     await prisma.maintenanceTicket.create({
       data: {
-        ...data,
+        ...result.data,
         propertyId: property.id,
       },
     });
   } catch (error) {
     console.error("Failed to create maintenance ticket", error);
-    throw new Error("Unable to create maintenance ticket.");
+    return {
+      success: false,
+      message: "Nije moguće kreirati zahtjev za održavanje.",
+    };
   }
 
   revalidatePath("/maintanance");
   redirect("/maintanance", RedirectType.replace);
 }
 
-export async function updateMaintenanceTicket(id: string, formData: FormData) {
-  try {
-    const data = parseFormData(formData, maintenanceTicketSchema);
+export async function updateMaintenanceTicket(
+  id: string,
+  prevState: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const result = maintenanceTicketSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description"),
+    status: formData.get("status"),
+    priority: formData.get("priority"),
+    propertyName: formData.get("propertyName"),
+  });
 
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.flattenError(result.error).fieldErrors,
+    };
+  }
+
+  try {
+    const workspaceId = await getWorkspaceId();
     const property = await prisma.property.findFirst({
-      where: { name: data.propertyName },
+      where: {
+        name: result.data.propertyName,
+        workspaceId,
+      },
     });
 
     if (!property) {
-      throw new Error("No property found to update the maintenance ticket.");
+      return {
+        success: false,
+        errors: {
+          propertyName: ["Odabrana nekretnina nije pronađena."],
+        },
+      };
     }
 
     await prisma.maintenanceTicket.update({
       where: { id },
       data: {
-        ...data,
+        ...result.data,
         propertyId: property.id,
       },
     });
   } catch (error) {
     console.error(`Failed to update maintenance ticket ${id}`, error);
-    throw new Error("Unable to update maintenance ticket.");
+    return {
+      success: false,
+      message: "Nije moguće urediti zahtjev za održavanje.",
+    };
   }
 
   revalidatePath("/maintanance");

@@ -13,7 +13,7 @@ export default function Demo() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       router.push("/dashboard");
-    }, 3000);
+    }, 2000);
     return () => {
       clearTimeout(timeoutId);
     };
