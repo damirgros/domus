@@ -74,8 +74,8 @@ export default function Leases() {
     },
   ];
 
-  const propertyIds = useMemo(
-    () => Array.from(new Set(leases.map((lease) => lease.propertyId))),
+  const propertyNames = useMemo(
+    () => Array.from(new Set(leases.map((lease) => lease.propertyName))),
     [leases],
   );
 
@@ -97,7 +97,7 @@ export default function Leases() {
           placeholder="Pretraži najmove..."
           selectedProperty={selectedProperty}
           handleSelectedProperty={setSelectedProperty}
-          properties={propertyIds}
+          properties={propertyNames}
           handlePageChange={setPage}
         />
         <Table
