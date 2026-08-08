@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getLeaseById } from "@/actions/leases";
 import { getProperties } from "@/actions/properties";
 import { getTenants } from "@/actions/tenants";
-import LeaseEditForm from "@/components/ui/aplication/forms/LeaseEditForm";
+import LeaseEditForm from "@/components/ui/aplication/forms/edit/LeaseEditForm";
 
 export default async function EditLeasePage({
   params,

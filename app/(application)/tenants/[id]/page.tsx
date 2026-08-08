@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { getProperties } from "@/actions/properties";
 import { getTenantById } from "@/actions/tenants";
-import TenantEditForm from "@/components/ui/aplication/forms/TenantEditForm";
+import TenantEditForm from "@/components/ui/aplication/forms/edit/TenantEditForm";
 
 export default async function EditTenantPage({
   params,

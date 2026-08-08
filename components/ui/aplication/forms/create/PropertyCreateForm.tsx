@@ -4,7 +4,11 @@ import { createProperty } from "@/actions/properties";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
-export default function PropertyCreatePage() {
+export default function PropertyCreateForm() {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  };
   const [state, formAction] = useActionState(createProperty, {
     success: false,
     errors: {},
@@ -18,11 +22,6 @@ export default function PropertyCreatePage() {
     rooms: "",
     owner: "",
   });
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
-  };
   return (
     <main className="p-4 sm:p-6 lg:p-10">
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">

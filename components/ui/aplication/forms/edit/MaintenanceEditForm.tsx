@@ -1,40 +1,36 @@
 "use client";
 
-import { createMaintenanceTicket } from "@/actions/maintenance";
-import { getProperties } from "@/actions/properties";
 import Link from "next/link";
-import { useActionState, useEffect, useState, type ChangeEvent } from "react";
+import { useActionState, useState, type ChangeEvent } from "react";
+
+import {
+  deleteMaintenanceTicket,
+  updateMaintenanceTicket,
+} from "@/actions/maintenance";
+import type { MaintenanceTicket } from "@/types/maintenance-ticket";
 import type { Property } from "@/types/property";
 
-export default function MaintenanceCreatePage() {
-  const [state, formAction] = useActionState(createMaintenanceTicket, {
-    success: false,
-    errors: {},
-  });
-  const [properties, setProperties] = useState<Property[]>([]);
+export default function MaintenanceEditForm({
+  ticket,
+  properties,
+}: {
+  ticket: MaintenanceTicket;
+  properties: Property[];
+}) {
+  const [state, action] = useActionState(
+    updateMaintenanceTicket.bind(null, ticket.id),
+    {
+      success: false,
+      errors: {},
+    },
+  );
   const [values, setValues] = useState({
-    title: "",
-    description: "",
-    status: "OPEN",
-    priority: "LOW",
-    propertyName: "",
+    title: ticket.title,
+    description: ticket.description,
+    status: ticket.status,
+    priority: ticket.priority,
+    propertyName: ticket.propertyName,
   });
-
-  useEffect(() => {
-    let mounted = true;
-
-    getProperties().then((data) => {
-      if (!mounted) return;
-      setProperties(data);
-      if (data[0]) {
-        setValues((prev) => ({ ...prev, propertyName: data[0].name }));
-      }
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleChange = (
     event: ChangeEvent<
@@ -50,16 +46,22 @@ export default function MaintenanceCreatePage() {
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">
-              Novi zahtev za održavanje
-            </h1>
+            <h1 className="text-3xl font-bold text-slate-900">Uredi zahtjev</h1>
             <p className="text-sm text-gray-500">
-              Zabeležite novi zahtev za održavanje.
+              Ažurirajte postojeći zahtjev za održavanje.
             </p>
           </div>
+          <form
+            action={deleteMaintenanceTicket.bind(null, ticket.id)}
+            className="mt-4 flex justify-start"
+          >
+            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
+              Obriši
+            </button>
+          </form>
         </div>
 
-        <form action={formAction} className="grid gap-4 md:grid-cols-2">
+        <form action={action} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Naslov
             <input
@@ -145,12 +147,12 @@ export default function MaintenanceCreatePage() {
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link
-                href="/maintanance"
+                href="/maintenance"
                 className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
               >
                 Odustani
               </Link>
-              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
                 Spremi
               </button>
             </div>

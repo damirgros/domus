@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { getExpenseById } from "@/actions/expenses";
 import { getProperties } from "@/actions/properties";
-import ExpenseEditForm from "@/components/ui/aplication/forms/ExpenseEditForm";
+import ExpenseEditForm from "@/components/ui/aplication/forms/edit/ExpenseEditForm";
 
 export default async function EditExpensePage({
   params,

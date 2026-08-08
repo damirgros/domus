@@ -140,8 +140,8 @@ export async function createMaintenanceTicket(
     };
   }
 
-  revalidatePath("/maintanance");
-  redirect("/maintanance", RedirectType.replace);
+  revalidatePath("/maintenance");
+  redirect("/maintenance", RedirectType.replace);
 }
 
 export async function updateMaintenanceTicket(
@@ -197,8 +197,8 @@ export async function updateMaintenanceTicket(
     };
   }
 
-  revalidatePath("/maintanance");
-  redirect("/maintanance", RedirectType.replace);
+  revalidatePath("/maintenance");
+  redirect("/maintenance", RedirectType.replace);
 }
 
 export async function deleteMaintenanceTicket(id: string) {
@@ -209,6 +209,6 @@ export async function deleteMaintenanceTicket(id: string) {
     throw new Error("Unable to delete maintenance ticket.");
   }
 
-  revalidatePath("/maintanance");
-  redirect("/maintanance", RedirectType.replace);
+  revalidatePath("/maintenance");
+  redirect("/maintenance", RedirectType.replace);
 }

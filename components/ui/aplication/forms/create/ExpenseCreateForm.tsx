@@ -1,35 +1,25 @@
 "use client";
 
+import { createExpense } from "@/actions/expenses";
 import Link from "next/link";
 import { useActionState, useState, type ChangeEvent } from "react";
-
-import {
-  deleteMaintenanceTicket,
-  updateMaintenanceTicket,
-} from "@/actions/maintenance";
-import type { MaintenanceTicket } from "@/types/maintenance-ticket";
 import type { Property } from "@/types/property";
 
-export default function MaintenanceEditForm({
-  ticket,
+export default function ExpenseCreateForm({
   properties,
 }: {
-  ticket: MaintenanceTicket;
   properties: Property[];
 }) {
-  const [state, action] = useActionState(
-    updateMaintenanceTicket.bind(null, ticket.id),
-    {
-      success: false,
-      errors: {},
-    },
-  );
+  const [state, formAction] = useActionState(createExpense, {
+    success: false,
+    errors: {},
+  });
   const [values, setValues] = useState({
-    title: ticket.title,
-    description: ticket.description,
-    status: ticket.status,
-    priority: ticket.priority,
-    propertyName: ticket.propertyName,
+    title: "",
+    description: "",
+    amount: "",
+    category: "OTHER",
+    propertyName: "",
   });
 
   const handleChange = (
@@ -46,22 +36,14 @@ export default function MaintenanceEditForm({
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Uredi zahtjev</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Novi trošak</h1>
             <p className="text-sm text-gray-500">
-              Ažurirajte postojeći zahtjev za održavanje.
+              Dodajte novi trošak u evidenciju.
             </p>
           </div>
-          <form
-            action={deleteMaintenanceTicket.bind(null, ticket.id)}
-            className="mt-4 flex justify-start"
-          >
-            <button className="rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white active:text-black">
-              Obriši
-            </button>
-          </form>
         </div>
 
-        <form action={action} className="grid gap-4 md:grid-cols-2">
+        <form action={formAction} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700 md:col-span-2">
             Naslov
             <input
@@ -81,7 +63,6 @@ export default function MaintenanceEditForm({
               name="description"
               value={values.description}
               onChange={handleChange}
-              required
               className="min-h-32 rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
@@ -91,36 +72,36 @@ export default function MaintenanceEditForm({
             </p>
           )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Status
-            <select
-              name="status"
-              value={values.status}
+            Iznos
+            <input
+              type="text"
+              name="amount"
+              value={values.amount}
               onChange={handleChange}
+              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            >
-              <option value="OPEN">OTVOREN</option>
-              <option value="IN_PROGRESS">U TOKU</option>
-              <option value="COMPLETED">ZAVRŠENO</option>
-            </select>
+            />
           </label>
-          {state.errors?.status && (
-            <p className="text-red-500 text-sm">{state.errors.status[0]}</p>
+          {state.errors?.amount && (
+            <p className="text-red-500 text-sm">{state.errors.amount[0]}</p>
           )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Prioritet
+            Kategorija
             <select
-              name="priority"
-              value={values.priority}
+              name="category"
+              value={values.category}
               onChange={handleChange}
               className="rounded-xl border border-gray-300 px-4 py-3"
             >
-              <option value="HIGH">VISOK</option>
-              <option value="MEDIUM">SREDNJI</option>
-              <option value="LOW">NIZAK</option>
+              <option value="REPAIR">POPRAVAK</option>
+              <option value="UTILITIES">REŽIJE</option>
+              <option value="TAX">POREZ</option>
+              <option value="INSURANCE">OSIGURANJE</option>
+              <option value="OTHER">DRUGO</option>
             </select>
           </label>
-          {state.errors?.priority && (
-            <p className="text-red-500 text-sm">{state.errors.priority[0]}</p>
+          {state.errors?.category && (
+            <p className="text-red-500 text-sm">{state.errors.category[0]}</p>
           )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
@@ -147,12 +128,12 @@ export default function MaintenanceEditForm({
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link
-                href="/maintanance"
+                href="/expenses"
                 className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
               >
                 Odustani
               </Link>
-              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:text-black active:bg-gray-400">
+              <button className="rounded-xl bg-[#138d63] px-5 py-3 text-sm font-bold text-white active:bg-gray-400">
                 Spremi
               </button>
             </div>

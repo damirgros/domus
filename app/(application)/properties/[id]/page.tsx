@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { getPropertyById } from "@/actions/properties";
 
-import PropertyEditForm from "@/components/ui/aplication/forms/PropertyEditForm";
+import PropertyEditForm from "@/components/ui/aplication/forms/edit/PropertyEditForm";
 
 export default async function EditPropertyPage({
   params,

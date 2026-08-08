@@ -95,7 +95,7 @@ export default function Maintanance() {
         title="Održavanje"
         description="Upravljajte servisnim zahtjevima i održavanjem"
         buttonText="Dodaj Zahtjev"
-        buttonHref="/maintanance/new"
+        buttonHref="/maintenance/new"
       />
       <div className="mx-3 rounded-2xl border-4 border-gray-200 sm:mx-6 lg:mx-10">
         <SearchBar
@@ -113,7 +113,7 @@ export default function Maintanance() {
         <Table
           data={filteredPaginatedTickets}
           columns={columns}
-          onRowClick={(row) => router.push(`/maintanance/${row.id}`)}
+          onRowClick={(row) => router.push(`/maintenance/${row.id}`)}
           isLoading={isLoading}
         />
         <Pagination

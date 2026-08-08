@@ -1,40 +1,31 @@
 "use client";
 
-import { createTenant } from "@/actions/tenants";
-import { getProperties } from "@/actions/properties";
-import type { Property } from "@/types/property";
+import { createLease } from "@/actions/leases";
 import Link from "next/link";
-import { useActionState, useEffect, useState, type ChangeEvent } from "react";
+import { useActionState, useState, type ChangeEvent } from "react";
+import type { Property } from "@/types/property";
+import type { Tenant } from "@/types/tenant";
 
-export default function TenantCreatePage() {
-  const [state, formAction] = useActionState(createTenant, {
+export default function LeaseCreatePage({
+  properties,
+  tenants,
+}: {
+  properties: Property[];
+  tenants: Tenant[];
+}) {
+  const [state, formAction] = useActionState(createLease, {
     success: false,
     errors: {},
   });
-  const [properties, setProperties] = useState<Property[]>([]);
+
   const [values, setValues] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
+    startDate: "",
+    endDate: "",
+    rentAmount: "",
     status: "ACTIVE",
+    tenantName: "",
     propertyName: "",
   });
-
-  useEffect(() => {
-    let mounted = true;
-
-    getProperties().then((data) => {
-      if (!mounted) return;
-      setProperties(data);
-      if (data[0]) {
-        setValues((prev) => ({ ...prev, propertyName: data[0].name }));
-      }
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -48,53 +39,86 @@ export default function TenantCreatePage() {
       <div className="mx-auto rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Novi stanar</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Novi najam</h1>
             <p className="text-sm text-gray-500">
-              Unesite podatke za novog stanara.
+              Kreirajte novi ugovor o najmu.
             </p>
           </div>
         </div>
 
         <form action={formAction} className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Ime i prezime
+            Početak
             <input
-              name="fullName"
-              value={values.fullName}
+              type="date"
+              name="startDate"
+              value={values.startDate}
               onChange={handleChange}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
-          {state.errors?.fullName && (
-            <p className="text-red-500 text-sm">{state.errors.fullName[0]}</p>
+          {state.errors?.startDate && (
+            <p className="text-red-500 text-sm">{state.errors.startDate[0]}</p>
           )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Email
+            Kraj
             <input
-              type="email"
-              name="email"
-              value={values.email}
+              type="date"
+              name="endDate"
+              value={values.endDate}
+              onChange={handleChange}
+              className="rounded-xl border border-gray-300 px-4 py-3"
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            Iznos najma
+            <input
+              type="text"
+              name="rentAmount"
+              value={values.rentAmount}
               onChange={handleChange}
               required
               className="rounded-xl border border-gray-300 px-4 py-3"
             />
           </label>
-          {state.errors?.email && (
-            <p className="text-red-500 text-sm">{state.errors.email[0]}</p>
+          {state.errors?.rentAmount && (
+            <p className="text-red-500 text-sm">{state.errors.rentAmount[0]}</p>
           )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Telefon
-            <input
-              name="phone"
-              value={values.phone}
+            Status
+            <select
+              name="status"
+              value={values.status}
               onChange={handleChange}
-              required
               className="rounded-xl border border-gray-300 px-4 py-3"
-            />
+            >
+              <option value="ACTIVE">AKTIVAN</option>
+              <option value="INACTIVE">INAKTIVAN</option>
+            </select>
           </label>
-          {state.errors?.phone && (
-            <p className="text-red-500 text-sm">{state.errors.phone[0]}</p>
+          {state.errors?.status && (
+            <p className="text-red-500 text-sm">{state.errors.status[0]}</p>
+          )}
+          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+            Ime stanara
+            <select
+              name="tenantName"
+              value={values.tenantName}
+              onChange={handleChange}
+              className="rounded-xl border border-gray-300 px-4 py-3"
+            >
+              {tenants.map((tenant) => {
+                return (
+                  <option value={tenant.fullName} key={tenant.id}>
+                    {tenant.fullName}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+          {state.errors?.tenantName && (
+            <p className="text-red-500 text-sm">{state.errors.tenantName[0]}</p>
           )}
           <label className="grid gap-2 text-sm font-semibold text-slate-700">
             Naziv nekretnine
@@ -118,25 +142,11 @@ export default function TenantCreatePage() {
               {state.errors.propertyName[0]}
             </p>
           )}
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
-            Status
-            <select
-              name="status"
-              value={values.status}
-              onChange={handleChange}
-              className="rounded-xl border border-gray-300 px-4 py-3"
-            >
-              <option value="ACTIVE">AKTIVAN</option>
-              <option value="INACTIVE">INAKTIVAN</option>
-            </select>
-          </label>
-          {state.errors?.status && (
-            <p className="text-red-500 text-sm">{state.errors.status[0]}</p>
-          )}
+
           <div className="md:col-span-2 mt-2 flex justify-stretch">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:gap-5">
               <Link
-                href="/tenants"
+                href="/leases"
                 className="inline-flex items-center justify-center border border-gray-200 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 active:bg-gray-400"
               >
                 Odustani
