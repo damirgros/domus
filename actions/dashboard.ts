@@ -12,6 +12,12 @@ export async function getDashboardSummary() {
     throw new Error("No session found");
   }
 
+  const workspaceScope = {
+    property: {
+      workspace: { sessionId },
+    },
+  };
+
   try {
     const [
       propertyCount,
@@ -24,39 +30,23 @@ export async function getDashboardSummary() {
       totalRent,
       totalExpenses,
       expiringLeases,
-    ] = await Promise.all([
+    ] = await prisma.$transaction([
       prisma.property.count({
         where: {
           workspace: { sessionId },
         },
       }),
       prisma.tenant.count({
-        where: {
-          property: {
-            workspace: { sessionId },
-          },
-        },
+        where: workspaceScope,
       }),
       prisma.lease.count({
-        where: {
-          property: {
-            workspace: { sessionId },
-          },
-        },
+        where: workspaceScope,
       }),
       prisma.maintenanceTicket.count({
-        where: {
-          property: {
-            workspace: { sessionId },
-          },
-        },
+        where: workspaceScope,
       }),
       prisma.expense.count({
-        where: {
-          property: {
-            workspace: { sessionId },
-          },
-        },
+        where: workspaceScope,
       }),
       prisma.payment.count({
         where: {
@@ -77,21 +67,13 @@ export async function getDashboardSummary() {
         },
       }),
       prisma.lease.aggregate({
-        where: {
-          property: {
-            workspace: { sessionId },
-          },
-        },
+        where: workspaceScope,
         _sum: {
           rentAmount: true,
         },
       }),
       prisma.expense.aggregate({
-        where: {
-          property: {
-            workspace: { sessionId },
-          },
-        },
+        where: workspaceScope,
         _sum: {
           amount: true,
         },
